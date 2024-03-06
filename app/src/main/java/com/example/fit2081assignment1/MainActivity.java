@@ -18,6 +18,10 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view){
         Toast.makeText(this,"TEST", Toast.LENGTH_SHORT).show();
     }
+
+    private void upDate2(View view){
+
+    }
 }
 
 
