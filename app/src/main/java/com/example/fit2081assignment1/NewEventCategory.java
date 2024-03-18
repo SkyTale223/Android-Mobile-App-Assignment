@@ -49,9 +49,8 @@ public class NewEventCategory extends AppCompatActivity {
 
 
         //Registering broadcast receiver
-        NewEventCategory.CategoryBroadcastReceiver myBroadCastReceiver = new NewEventCategory.CategoryBroadcastReceiver();
-        registerReceiver(myBroadCastReceiver, new IntentFilter(SMSReceiver.SMS_FILTER), RECEIVER_EXPORTED);
-
+        NewEventCategory.CategoryBroadcastReceiver categoryBroadCastReceiver = new NewEventCategory.CategoryBroadcastReceiver();
+        registerReceiver(categoryBroadCastReceiver, new IntentFilter(SMSReceiver.CATEGORY_SMS_FILTER), RECEIVER_EXPORTED);
 
 
     }
@@ -100,58 +99,58 @@ public class NewEventCategory extends AppCompatActivity {
         SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
         SharedPreferences.Editor editor = saveUserInformationToSharedPreference.edit();
         editor.putString("CATEGORY_ID", categoryIDValue);
-        editor.putString("CATEGORY_NAME_", categoryNameValue);
+        editor.putString("CATEGORY_NAME", categoryNameValue);
         editor.putString("CATEGORY_EVENT_COUNT", eventCountValue);
         editor.putString("IS_ACTIVE_STATUS", isActiveValue);
         editor.apply();
     }
 
-    //Beginning fo the broadcast receiver class
+    //Beginning of the broadcast receiver class
     class CategoryBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             //Getting the message from SMSReceiver using Intent
-            String incomingMessage = intent.getStringExtra(SMSReceiver.SMS_MSG_KEY);
+            String incomingMessage = intent.getStringExtra(SMSReceiver.CATEGORY_SMS_MSG_KEY);
 
-            //If the message is null and it start with category then proceed
+            //If the message is not null and starts with category then proceed
             if (incomingMessage != null && incomingMessage.startsWith("category:")) {
-                //Replace the first 8 letters (category) as it will not need to be appended
+                //Remove the "category:" prefix
                 incomingMessage = incomingMessage.substring(9);
 
-                //Telling string tokenizer that the delimiter character is ;
-                StringTokenizer sTCategory = new StringTokenizer(incomingMessage, ";");
-                //Check amount of tokens in the message
-                if (sTCategory.countTokens() >= 3) {
-                    String categoryNameString = sTCategory.nextToken();
-                    String eventCountString = sTCategory.nextToken();
-                    String isActiveString = sTCategory.nextToken();
+                //Tokenize the message using ";" as the delimiter
+                StringTokenizer tokenizer = new StringTokenizer(incomingMessage, ";");
 
-                    //Start of the try and catch to debug the messages the user sent, checking for any invalid bits
+                //Check if the number of tokens is correct
+                if (tokenizer.countTokens() >= 3) {
+                    //Extract category details from tokens
+                    String categoryName = tokenizer.nextToken();
+                    String eventCount = tokenizer.nextToken();
+                    String isActive = tokenizer.nextToken();
+
                     try {
-                        //Check eventcount is actually an integer by parsing it from a string to int
-                        int eventCount = Integer.parseInt(eventCountString);
+                        //Parse event count to integer
+                        int count = Integer.parseInt(eventCount);
 
-                        //Changing boolean checking to all uppercase, due to case sensitivity
-                        isActiveString = isActiveString.toUpperCase();
+                        //Convert isActive string to uppercase and parse to boolean
+                        isActive = isActive.toUpperCase();
+                        boolean active = Boolean.parseBoolean(isActive);
 
-                        //If the active string is equal to either true or false then it will proceed
-                        if (isActiveString.equals("TRUE") || isActiveString.equals("FALSE")) {
-                            boolean isActive = Boolean.parseBoolean(isActiveString);
-                            etCategoryName.setText(categoryNameString);
-                            etEventCount.setText(String.valueOf(eventCount));
-                            swIsActive.setChecked(isActive);
-                            Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
-                        } else {
-                            //Bunch of error messages
-                            Toast.makeText(context, "Incorrect Category Active State", Toast.LENGTH_SHORT).show();
-                        }
-                        //Catching if the number is a negative then it will give a certain error message
+                        //Update UI with category details
+                        etCategoryName.setText(categoryName);
+                        etEventCount.setText(String.valueOf(count));
+                        swIsActive.setChecked(active);
+
+                        //Show a toast message
+                        Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
                     } catch (NumberFormatException e) {
+                        //Handle invalid event count
                         Toast.makeText(context, "Invalid Event Count", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    //Handle invalid message format
                     Toast.makeText(context, "Invalid message format", Toast.LENGTH_SHORT).show();
                 }
             } else {
+                //Handle unknown or invalid command
                 Toast.makeText(context, "Unknown or invalid command", Toast.LENGTH_SHORT).show();
             }
         }
