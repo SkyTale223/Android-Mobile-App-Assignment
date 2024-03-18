@@ -26,6 +26,7 @@ public class NewEventCategory extends AppCompatActivity {
     EditText etCategoryName;
     EditText etEventCount;
 
+
     Switch swIsActive;
 
     @Override
@@ -38,7 +39,7 @@ public class NewEventCategory extends AppCompatActivity {
         etCategoryID = findViewById(R.id.editTextCategoryID);
         etCategoryName = findViewById(R.id.editTextCategoryName);
         etEventCount = findViewById(R.id.editTextEventCount);
-        swIsActive = findViewById(R.id.switchIsActive);
+        swIsActive = findViewById(R.id.switchIsActiveCategory);
 
         //Giving permissions to send, receive and read sms messages
         ActivityCompat.requestPermissions(this, new String[]{
