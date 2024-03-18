@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class Signup extends AppCompatActivity {
 
@@ -26,6 +27,11 @@ public class Signup extends AppCompatActivity {
         tvUsername = findViewById(R.id.editTextUsername);
         tvPassword = findViewById(R.id.editTextPassword);
         tvConfirmPassword = findViewById(R.id.editTextConfirmPassword);
+
+        ActivityCompat.requestPermissions(this, new String[]{
+                android.Manifest.permission.SEND_SMS,
+                android.Manifest.permission.RECEIVE_SMS,
+                android.Manifest.permission.READ_SMS}, 0);
     }
 
     public void onButtonRegister(View view){
