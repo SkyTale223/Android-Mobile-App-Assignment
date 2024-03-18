@@ -108,23 +108,23 @@ public class NewEventCategory extends AppCompatActivity {
     //Beginning of the broadcast receiver class
     class CategoryBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
-            //Getting the message from SMSReceiver using Intent
+            // Getting the message from SMSReceiver using Intent
             String incomingMessage = intent.getStringExtra(SMSReceiver.CATEGORY_SMS_MSG_KEY);
 
-            //If the message is not null and starts with category then proceed
+            // If the message is not null and starts with "category:" then proceed
             if (incomingMessage != null && incomingMessage.startsWith("category:")) {
-                //Remove the "category:" prefix
+                // Remove the "category:" prefix
                 incomingMessage = incomingMessage.substring(9);
 
-                //Tokenize the message using ";" as the delimiter
+                // Tokenize the message using ";" as the delimiter
                 StringTokenizer tokenizer = new StringTokenizer(incomingMessage, ";");
 
-                //Check if the number of tokens is correct
+                // Check if the number of tokens is correct
                 if (tokenizer.countTokens() >= 3) {
-                    //Extract category details from tokens
+                    // Extract category details from tokens
                     String categoryName = tokenizer.nextToken();
                     String eventCount = tokenizer.nextToken();
-                    String isActive = tokenizer.nextToken();
+                    String categoryIsActive = tokenizer.nextToken();
 
                     try {
                         // Parse event count to integer
@@ -133,16 +133,22 @@ public class NewEventCategory extends AppCompatActivity {
                         // Check if count is non-negative
                         if (count >= 0) {
                             // Convert isActive string to uppercase and parse to boolean
-                            isActive = isActive.toUpperCase();
-                            boolean active = Boolean.parseBoolean(isActive);
+                            categoryIsActive = categoryIsActive.toUpperCase();
 
-                            // Update UI with category details
-                            etCategoryName.setText(categoryName);
-                            etEventCount.setText(String.valueOf(count));
-                            swIsActive.setChecked(active);
+                            if (categoryIsActive.equals("TRUE") || categoryIsActive.equals("FALSE")) {
+                                boolean active = Boolean.parseBoolean(categoryIsActive);
 
-                            // Show a toast message
-                            Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
+                                // Update UI with category details
+                                etCategoryName.setText(categoryName);
+                                etEventCount.setText(String.valueOf(count));
+                                swIsActive.setChecked(active);
+
+                                // Show a toast message
+                                Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Handle invalid isActive value
+                                Toast.makeText(context, "Invalid Category Active value", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
                             // Handle invalid event count (negative)
                             Toast.makeText(context, "Event count cannot be negative", Toast.LENGTH_SHORT).show();
@@ -162,4 +168,3 @@ public class NewEventCategory extends AppCompatActivity {
         }
     }
 }
-

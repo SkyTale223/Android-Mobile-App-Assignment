@@ -90,7 +90,7 @@ public class NewEvent extends AppCompatActivity {
 
         saveEventInformationToSharedPreferences(eventIDString, eventNameString, eventCategoryID, eventTickets, isActiveString);
 
-        Toast.makeText(this, "Event saved:" + etEventID.getText().toString() + " to " + eventCategoryID, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Event: " + etEventID.getText().toString() + " saved to category " + eventCategoryID, Toast.LENGTH_SHORT).show();
     }
 
     private void saveEventInformationToSharedPreferences(String eventIDValue, String eventNameValue, String eventCategoryValue, String eventTicketValue, String eventActiveValue) {
