@@ -95,13 +95,13 @@ public class NewEventCategory extends AppCompatActivity {
     }
 
 
-    private void saveCategoryInformationToSharedPreferences(String categoryIDValue, String categoryNameValue, String eventCountValue, String isActiveValue) {
+    private void saveCategoryInformationToSharedPreferences(String categoryIDValue, String categoryNameValue, String eventCountValue, String categoryActiveValue) {
         SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
         SharedPreferences.Editor editor = saveUserInformationToSharedPreference.edit();
         editor.putString("CATEGORY_ID", categoryIDValue);
         editor.putString("CATEGORY_NAME", categoryNameValue);
         editor.putString("CATEGORY_EVENT_COUNT", eventCountValue);
-        editor.putString("IS_ACTIVE_STATUS", isActiveValue);
+        editor.putString("CATEGORY_ACTIVE_STATUS", categoryActiveValue);
         editor.apply();
     }
 
@@ -127,30 +127,36 @@ public class NewEventCategory extends AppCompatActivity {
                     String isActive = tokenizer.nextToken();
 
                     try {
-                        //Parse event count to integer
+                        // Parse event count to integer
                         int count = Integer.parseInt(eventCount);
 
-                        //Convert isActive string to uppercase and parse to boolean
-                        isActive = isActive.toUpperCase();
-                        boolean active = Boolean.parseBoolean(isActive);
+                        // Check if count is non-negative
+                        if (count >= 0) {
+                            // Convert isActive string to uppercase and parse to boolean
+                            isActive = isActive.toUpperCase();
+                            boolean active = Boolean.parseBoolean(isActive);
 
-                        //Update UI with category details
-                        etCategoryName.setText(categoryName);
-                        etEventCount.setText(String.valueOf(count));
-                        swIsActive.setChecked(active);
+                            // Update UI with category details
+                            etCategoryName.setText(categoryName);
+                            etEventCount.setText(String.valueOf(count));
+                            swIsActive.setChecked(active);
 
-                        //Show a toast message
-                        Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
+                            // Show a toast message
+                            Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Handle invalid event count (negative)
+                            Toast.makeText(context, "Event count cannot be negative", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (NumberFormatException e) {
-                        //Handle invalid event count
+                        // Handle invalid event count (not a number)
                         Toast.makeText(context, "Invalid Event Count", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    //Handle invalid message format
+                    // Handle invalid message format
                     Toast.makeText(context, "Invalid message format", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                //Handle unknown or invalid command
+                // Handle unknown or invalid command
                 Toast.makeText(context, "Unknown or invalid command", Toast.LENGTH_SHORT).show();
             }
         }

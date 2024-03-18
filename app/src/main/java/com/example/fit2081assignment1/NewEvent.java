@@ -81,7 +81,29 @@ public class NewEvent extends AppCompatActivity {
         //Setting categoryID string on the edit text, starting with C
         etEventID.setText(eventID);
 
+
+        String eventIDString = etEventID.getText().toString();
+        String eventNameString = etEventName.getText().toString();
+        String eventCategoryID = etCategory.getText().toString();
+        String eventTickets = etTickets.getText().toString();
+        String isActiveString = String.valueOf(swEventIsActive.isChecked());
+
+        saveEventInformationToSharedPreferences(eventIDString, eventNameString, eventCategoryID, eventTickets, isActiveString);
+
+        Toast.makeText(this, "Event saved:" + etEventID.getText().toString() + " to " + eventCategoryID, Toast.LENGTH_SHORT).show();
     }
+
+    private void saveEventInformationToSharedPreferences(String eventIDValue, String eventNameValue, String eventCategoryValue, String eventTicketValue, String eventActiveValue) {
+        SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
+        SharedPreferences.Editor editor = saveUserInformationToSharedPreference.edit();
+        editor.putString("EVENT_ID", eventIDValue);
+        editor.putString("EVENT_NAME", eventNameValue);
+        editor.putString("EVENT_CATEGORY_ID", eventCategoryValue);
+        editor.putString("EVENT_TICKET_COUNT", eventTicketValue);
+        editor.putString("EVENT_ACTIVE_STATUS", eventActiveValue);
+        editor.apply();
+    }
+
 
     class EventBroadCastReceiver extends BroadcastReceiver {
         @Override
@@ -101,30 +123,35 @@ public class NewEvent extends AppCompatActivity {
                     try {
                         int ticketCount = Integer.parseInt(eventTicketString);
 
-                        eventIsActiveString = eventIsActiveString.toUpperCase();
+                        // Check if ticketCount is non-negative
+                        if (ticketCount >= 0) {
+                            eventIsActiveString = eventIsActiveString.toUpperCase();
 
-                        if (eventIsActiveString.equals("TRUE") || eventIsActiveString.equals("FALSE")) {
-                            boolean eventIsActive = Boolean.parseBoolean(eventIsActiveString);
-                            SharedPreferences sharedPreferences = context.getSharedPreferences("CATEGORY_INFORMATION", Context.MODE_PRIVATE);
-                            String savedCategoryID = sharedPreferences.getString("CATEGORY_ID", "");
+                            if (eventIsActiveString.equals("TRUE") || eventIsActiveString.equals("FALSE")) {
+                                boolean eventIsActive = Boolean.parseBoolean(eventIsActiveString);
+                                SharedPreferences sharedPreferences = context.getSharedPreferences("CATEGORY_INFORMATION", Context.MODE_PRIVATE);
+                                String savedCategoryID = sharedPreferences.getString("CATEGORY_ID", "");
 
-                            if (savedCategoryID.equals(categoryIDString)) {
-                                etEventName.setText(eventNameString);
-                                etTickets.setText(String.valueOf(ticketCount));
-                                swEventIsActive.setChecked(eventIsActive);
-                                etCategory.setText(savedCategoryID);
-                                Toast.makeText(context, "Event updated", Toast.LENGTH_SHORT).show();
-                                Toast.makeText(context, "Event saved:" + etEventID.getText().toString() + " to " + categoryIDString, Toast.LENGTH_SHORT).show();
+                                if (savedCategoryID.equals(categoryIDString)) {
+                                    etEventName.setText(eventNameString);
+                                    etTickets.setText(String.valueOf(ticketCount));
+                                    swEventIsActive.setChecked(eventIsActive);
+                                    etCategory.setText(savedCategoryID);
+                                    Toast.makeText(context, "Event updated", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "Category ID does not match", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                Toast.makeText(context, "Category ID does not match", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Incorrect Event Active State", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(context, "Incorrect Event Active State", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Ticket count cannot be negative", Toast.LENGTH_SHORT).show();
                         }
                     } catch (NumberFormatException e) {
                         Toast.makeText(context, "Invalid Ticket Count", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    // Handle unknown or invalid command
                     Toast.makeText(context, "Unknown or invalid command", Toast.LENGTH_SHORT).show();
                 }
             }
