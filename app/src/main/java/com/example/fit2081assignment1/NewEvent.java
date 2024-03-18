@@ -14,15 +14,13 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 import java.util.Random;
 import java.util.StringTokenizer;
 
 public class NewEvent extends AppCompatActivity {
-
+    // Declaring variables
     EditText etEventID;
     EditText etEventName;
     EditText etCategory;
@@ -35,17 +33,20 @@ public class NewEvent extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_new_event);
 
+        // Setting the view to find what user has inputted
         etEventID = findViewById(R.id.editTextEventID);
         etEventName = findViewById(R.id.editTextEventName);
         etCategory = findViewById(R.id.editTextCategory);
         etTickets = findViewById(R.id.editTextTickets);
         swEventIsActive = findViewById(R.id.switchIsActiveEvent);
 
+        // Finding permissions to send, receive and read sms messages
         ActivityCompat.requestPermissions(this, new String[]{
                 android.Manifest.permission.SEND_SMS,
                 android.Manifest.permission.RECEIVE_SMS,
                 android.Manifest.permission.READ_SMS}, 0);
 
+        // Registering broadcast receiver
         NewEvent.EventBroadCastReceiver myBroadCastReceiver = new NewEvent.EventBroadCastReceiver();
         registerReceiver(myBroadCastReceiver, new IntentFilter(SMSReceiver.EVENT_SMS_FILTER), RECEIVER_EXPORTED);
 
@@ -53,32 +54,32 @@ public class NewEvent extends AppCompatActivity {
 
 
     public void onSave(View view) {
-        //Start of the random ID generator
+        // Start of the random ID generator
         //Declaring what alphabets and stringbuilder variable
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder eventID = new StringBuilder();
         Random random = new Random();
 
-        //Appending C to start of ID
+        // Appending C to start of ID
         eventID.append("E");
 
-        //Loop to start appending random characters to the string
+        // Loop to start appending random characters to the string
         for (int i = 0; i < 2; i++) {
             int index = random.nextInt(alphabet.length());
             char randomChar = alphabet.charAt(index);
             eventID.append(randomChar);
         }
 
-        //Appending a - gap in between
+        // Appending a - for the gap in between
         eventID.append("-");
 
-        //Similarly appending random digits to the string
+        // Similarly appending random digits to the string
         for (int i = 0; i < 4; i++) {
             int randomDigit = random.nextInt(10);
             eventID.append(randomDigit);
         }
 
-        //Setting categoryID string on the edit text, starting with C
+        // Setting categoryID string on the edit text, starting with C
         etEventID.setText(eventID);
 
 
@@ -88,11 +89,15 @@ public class NewEvent extends AppCompatActivity {
         String eventTickets = etTickets.getText().toString();
         String isActiveString = String.valueOf(swEventIsActive.isChecked());
 
+
+        // Saving all information the the shared preference for events
         saveEventInformationToSharedPreferences(eventIDString, eventNameString, eventCategoryID, eventTickets, isActiveString);
 
         Toast.makeText(this, "Event: " + etEventID.getText().toString() + " saved to category " + eventCategoryID, Toast.LENGTH_SHORT).show();
     }
 
+
+    // Creating the shared Preferences for Events
     private void saveEventInformationToSharedPreferences(String eventIDValue, String eventNameValue, String eventCategoryValue, String eventTicketValue, String eventActiveValue) {
         SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
         SharedPreferences.Editor editor = saveUserInformationToSharedPreference.edit();
@@ -105,11 +110,17 @@ public class NewEvent extends AppCompatActivity {
     }
 
 
+    // Start of broacast receiver class to listen for messages
     class EventBroadCastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            // Using the unique event msg key due to it being an event message
             String incomingMessage = intent.getStringExtra(SMSReceiver.EVENT_SMS_MSG_KEY);
 
+            /*If the incoming message here is not null then it will subtract the first 6 character "event:"
+             * Upon subtracting that it will then tokenize each part into the specific string
+             * After that it'll parse the string and begin checking if ticket count is above 0
+             * If boolean value is valid and give a toast upon successful updates of everything*/
             if (incomingMessage != null) {
                 incomingMessage = incomingMessage.substring(6);
 
@@ -123,7 +134,7 @@ public class NewEvent extends AppCompatActivity {
                     try {
                         int ticketCount = Integer.parseInt(eventTicketString);
 
-                        // Check if ticketCount is non-negative
+                        // Check if ticketCount is negative
                         if (ticketCount >= 0) {
                             eventIsActiveString = eventIsActiveString.toUpperCase();
 
@@ -139,15 +150,19 @@ public class NewEvent extends AppCompatActivity {
                                     etCategory.setText(savedCategoryID);
                                     Toast.makeText(context, "Event updated", Toast.LENGTH_SHORT).show();
                                 } else {
+                                    // Handle invalid category ID
                                     Toast.makeText(context, "Category ID does not match", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
+                                // Handle invalid event active state
                                 Toast.makeText(context, "Incorrect Event Active State", Toast.LENGTH_SHORT).show();
                             }
                         } else {
+                            // Handle negative ticket count
                             Toast.makeText(context, "Ticket count cannot be negative", Toast.LENGTH_SHORT).show();
                         }
                     } catch (NumberFormatException e) {
+                        // Handle invalid ticket input
                         Toast.makeText(context, "Invalid Ticket Count", Toast.LENGTH_SHORT).show();
                     }
                 } else {

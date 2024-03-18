@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 
 public class NewEventCategory extends AppCompatActivity {
 
-    //Declaring global variables
+    // Declaring variables
     EditText etCategoryID;
     EditText etCategoryName;
     EditText etEventCount;
@@ -35,20 +35,17 @@ public class NewEventCategory extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_new_event_category);
 
-        //Setting the view to find what user has inputted
+        // Finding the view to find what user has inputted
         etCategoryID = findViewById(R.id.editTextCategoryID);
         etCategoryName = findViewById(R.id.editTextCategoryName);
         etEventCount = findViewById(R.id.editTextEventCount);
         swIsActive = findViewById(R.id.switchIsActiveCategory);
 
-        //Giving permissions to send, receive and read sms messages
-        ActivityCompat.requestPermissions(this, new String[]{
-                android.Manifest.permission.SEND_SMS,
-                android.Manifest.permission.RECEIVE_SMS,
-                android.Manifest.permission.READ_SMS}, 0);
+        // Giving permissions to send, receive and read sms messages
+        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.SEND_SMS, android.Manifest.permission.RECEIVE_SMS, android.Manifest.permission.READ_SMS}, 0);
 
 
-        //Registering broadcast receiver
+        // Registering broadcast receiver
         NewEventCategory.CategoryBroadcastReceiver categoryBroadCastReceiver = new NewEventCategory.CategoryBroadcastReceiver();
         registerReceiver(categoryBroadCastReceiver, new IntentFilter(SMSReceiver.CATEGORY_SMS_FILTER), RECEIVER_EXPORTED);
 
@@ -56,32 +53,32 @@ public class NewEventCategory extends AppCompatActivity {
     }
 
     public void onSave(View view) {
-        //Start of the random ID generator
-        //Declaring what alphabets and stringbuilder variable
+        // Start of the random ID generator
+        // Declaring what alphabets and stringbuilder variable
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder categoryID = new StringBuilder();
         Random random = new Random();
 
-        //Appending C to start of ID
+        // Appending C to start of ID
         categoryID.append("C");
 
-        //Loop to start appending random characters to the string
+        // Loop to start appending random characters to the string
         for (int i = 0; i < 2; i++) {
             int index = random.nextInt(alphabet.length());
             char randomChar = alphabet.charAt(index);
             categoryID.append(randomChar);
         }
 
-        //Appending a - gap in between
+        // Appending a - gap in between
         categoryID.append("-");
 
-        //Similarly appending random digits to the string
+        // Similarly appending random digits to the string
         for (int i = 0; i < 4; i++) {
             int randomDigit = random.nextInt(10);
             categoryID.append(randomDigit);
         }
 
-        //Setting categoryID string on the edit text, starting with C
+        // Setting categoryID string on the edit text, starting with C
         etCategoryID.setText(categoryID);
 
         String categoryString = etCategoryID.getText().toString();
@@ -94,7 +91,7 @@ public class NewEventCategory extends AppCompatActivity {
         Toast.makeText(this, "Category saved successfully: " + categoryID, Toast.LENGTH_SHORT).show();
     }
 
-
+    // Creating the shared preferences for the category class
     private void saveCategoryInformationToSharedPreferences(String categoryIDValue, String categoryNameValue, String eventCountValue, String categoryActiveValue) {
         SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
         SharedPreferences.Editor editor = saveUserInformationToSharedPreference.edit();
@@ -150,11 +147,11 @@ public class NewEventCategory extends AppCompatActivity {
                                 Toast.makeText(context, "Invalid Category Active value", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            // Handle invalid event count (negative)
+                            // Handle negative event count
                             Toast.makeText(context, "Event count cannot be negative", Toast.LENGTH_SHORT).show();
                         }
                     } catch (NumberFormatException e) {
-                        // Handle invalid event count (not a number)
+                        // Handle invalid event input
                         Toast.makeText(context, "Invalid Event Count", Toast.LENGTH_SHORT).show();
                     }
                 } else {
