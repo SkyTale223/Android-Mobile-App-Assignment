@@ -125,7 +125,7 @@ public class NewEvent extends AppCompatActivity {
                 incomingMessage = incomingMessage.substring(6);
 
                 StringTokenizer sTevent = new StringTokenizer(incomingMessage, ";");
-                if (sTevent.countTokens() >= 4) {
+                if (sTevent.countTokens() == 4) {
                     String eventNameString = sTevent.nextToken();
                     String categoryIDString = sTevent.nextToken();
                     String eventTicketString = sTevent.nextToken();
@@ -148,7 +148,6 @@ public class NewEvent extends AppCompatActivity {
                                     etTickets.setText(String.valueOf(ticketCount));
                                     swEventIsActive.setChecked(eventIsActive);
                                     etCategory.setText(savedCategoryID);
-                                    Toast.makeText(context, "Event updated", Toast.LENGTH_SHORT).show();
                                 } else {
                                     // Handle invalid category ID
                                     Toast.makeText(context, "Category ID does not match", Toast.LENGTH_SHORT).show();

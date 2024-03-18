@@ -117,7 +117,7 @@ public class NewEventCategory extends AppCompatActivity {
                 StringTokenizer tokenizer = new StringTokenizer(incomingMessage, ";");
 
                 // Check if the number of tokens is correct
-                if (tokenizer.countTokens() >= 3) {
+                if (tokenizer.countTokens() == 3) {
                     // Extract category details from tokens
                     String categoryName = tokenizer.nextToken();
                     String eventCount = tokenizer.nextToken();
