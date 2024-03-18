@@ -53,6 +53,7 @@ public class NewEventCategory extends AppCompatActivity {
         registerReceiver(myBroadCastReceiver, new IntentFilter(SMSReceiver.SMS_FILTER), RECEIVER_EXPORTED);
 
 
+
     }
 
     public void onSave(View view) {
@@ -141,7 +142,7 @@ public class NewEventCategory extends AppCompatActivity {
                             Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
                         } else {
                             //Bunch of error messages
-                            Toast.makeText(context, "Incorrect Event Active State", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Incorrect Category Active State", Toast.LENGTH_SHORT).show();
                         }
                         //Catching if the number is a negative then it will give a certain error message
                     } catch (NumberFormatException e) {
