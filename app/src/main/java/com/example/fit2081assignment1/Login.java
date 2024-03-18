@@ -15,8 +15,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class Login extends AppCompatActivity {
-    EditText tvLoginUsername;
-    EditText tvLoginPassword;
+    EditText etLoginUsername;
+    EditText etLoginPassword;
 
 
     @Override
@@ -25,30 +25,33 @@ public class Login extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        tvLoginUsername = findViewById(R.id.editTextLoginUsername);
-        tvLoginPassword = findViewById(R.id.editTextLoginPassword);
+        etLoginUsername = findViewById(R.id.editTextLoginUsername);
+        etLoginPassword = findViewById(R.id.editTextLoginPassword);
     }
 
     public void onButtonLogin(View view){
         SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("USER_INFORMATION", MODE_PRIVATE);
 
-        String stringLogiuserName = tvLoginUsername.getText().toString();
-        String stringLoginPassword = tvLoginPassword.getText().toString();
+        String stringLogiuserName = etLoginUsername.getText().toString();
+        String stringLoginPassword = etLoginPassword.getText().toString();
         String restoredUsername = saveUserInformationToSharedPreference.getString("USER_USERNAME", null);
         String restoredPassword = saveUserInformationToSharedPreference.getString("USER_PASSWORD", null);
 
+
         if(stringLogiuserName.equals(restoredUsername) && stringLoginPassword.equals(restoredPassword)){
             Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
-            Intent dashboard = new Intent(this, Dashboard.class);
-            startActivity(dashboard);
+            Intent dashboardIntent = new Intent(this, Dashboard.class);
+            startActivity(dashboardIntent);
         }
 
         else{
             Toast.makeText(this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
         }
+    }
 
-
-
+    public void onButtonRegister(View view){
+        Intent registerIntent = new Intent(this, Signup.class);
+        startActivity(registerIntent);
     }
 
 
