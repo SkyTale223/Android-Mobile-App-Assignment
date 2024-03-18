@@ -1,6 +1,9 @@
 package com.example.fit2081assignment1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,12 +30,9 @@ public class Signup extends AppCompatActivity {
         tvUsername = findViewById(R.id.editTextUsername);
         tvPassword = findViewById(R.id.editTextPassword);
         tvConfirmPassword = findViewById(R.id.editTextConfirmPassword);
-
-        ActivityCompat.requestPermissions(this, new String[]{
-                android.Manifest.permission.SEND_SMS,
-                android.Manifest.permission.RECEIVE_SMS,
-                android.Manifest.permission.READ_SMS}, 0);
     }
+
+
 
     public void onButtonRegister(View view){
         String usernameString = tvUsername.getText().toString();
@@ -56,9 +56,6 @@ public class Signup extends AppCompatActivity {
         else{
             Toast.makeText(this,"Passwords are different", Toast.LENGTH_SHORT).show();
         }
-
-
-
     }
 
 
@@ -69,5 +66,9 @@ public class Signup extends AppCompatActivity {
         editor.putString("USER_PASSWORD", passwordValue);
         editor.apply();
     }
+
+
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.fit2081assignment1;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -38,6 +39,8 @@ public class Login extends AppCompatActivity {
 
         if(stringLogiuserName.equals(restoredUsername) && stringLoginPassword.equals(restoredPassword)){
             Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
+            Intent dashboard = new Intent(this, Dashboard.class);
+            startActivity(dashboard);
         }
 
         else{
