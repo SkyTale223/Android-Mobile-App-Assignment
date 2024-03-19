@@ -104,6 +104,7 @@ public class NewEventCategory extends AppCompatActivity {
 
     //Beginning of the broadcast receiver class
     class CategoryBroadcastReceiver extends BroadcastReceiver {
+        @Override
         public void onReceive(Context context, Intent intent) {
             // Getting the message from SMSReceiver using Intent
             String incomingMessage = intent.getStringExtra(SMSReceiver.CATEGORY_SMS_MSG_KEY);
@@ -140,8 +141,6 @@ public class NewEventCategory extends AppCompatActivity {
                                 etEventCount.setText(String.valueOf(count));
                                 swIsActive.setChecked(active);
 
-                                // Show a toast message
-                                Toast.makeText(context, "Category updated", Toast.LENGTH_SHORT).show();
                             } else {
                                 // Handle invalid isActive value
                                 Toast.makeText(context, "Invalid Category Active value", Toast.LENGTH_SHORT).show();
