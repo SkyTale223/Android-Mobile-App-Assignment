@@ -130,7 +130,7 @@ public class NewEventCategory extends AppCompatActivity {
 
                         // Check if count is non-negative
                         if (count >= 0) {
-                            // Convert isActive string to uppercase and parse to boolean
+                            // Convert categoryIsActive string to uppercase and parse to boolean
                             categoryIsActive = categoryIsActive.toUpperCase();
 
                             if (categoryIsActive.equals("TRUE") || categoryIsActive.equals("FALSE")) {

@@ -60,7 +60,7 @@ public class NewEvent extends AppCompatActivity {
         StringBuilder eventID = new StringBuilder();
         Random random = new Random();
 
-        // Appending C to start of ID
+        // Appending E to start of ID
         eventID.append("E");
 
         // Loop to start appending random characters to the string
@@ -97,7 +97,7 @@ public class NewEvent extends AppCompatActivity {
     }
 
 
-    // Creating the shared Preferences for Events
+    // Creating the shared Preferences for the event class
     private void saveEventInformationToSharedPreferences(String eventIDValue, String eventNameValue, String eventCategoryValue, String eventTicketValue, String eventActiveValue) {
         SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
         SharedPreferences.Editor editor = saveUserInformationToSharedPreference.edit();
@@ -114,17 +114,17 @@ public class NewEvent extends AppCompatActivity {
     class EventBroadCastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Using the unique event msg key due to it being an event message
+            // Getting the message from SMSReceiver using Intent
             String incomingMessage = intent.getStringExtra(SMSReceiver.EVENT_SMS_MSG_KEY);
 
-            /*If the incoming message here is not null then it will subtract the first 6 character "event:"
-             * Upon subtracting that it will then tokenize each part into the specific string
-             * After that it'll parse the string and begin checking if ticket count is above 0
-             * If boolean value is valid and give a toast upon successful updates of everything*/
+            // If the message is not null and starts with "category:" then proceed
             if (incomingMessage != null) {
                 incomingMessage = incomingMessage.substring(6);
 
+                // Tokenize the message using ";" as the delimiter
                 StringTokenizer sTevent = new StringTokenizer(incomingMessage, ";");
+
+                // Check if the number of tokens is correct
                 if (sTevent.countTokens() == 4) {
                     String eventNameString = sTevent.nextToken();
                     String categoryIDString = sTevent.nextToken();
@@ -132,17 +132,21 @@ public class NewEvent extends AppCompatActivity {
                     String eventIsActiveString = sTevent.nextToken();
 
                     try {
+                        // Parse ticket count to integer
                         int ticketCount = Integer.parseInt(eventTicketString);
 
                         // Check if ticketCount is negative
                         if (ticketCount >= 0) {
                             eventIsActiveString = eventIsActiveString.toUpperCase();
 
+
+                            // Convert eventIsActiveString string to uppercase and parse to boolean
                             if (eventIsActiveString.equals("TRUE") || eventIsActiveString.equals("FALSE")) {
                                 boolean eventIsActive = Boolean.parseBoolean(eventIsActiveString);
                                 SharedPreferences sharedPreferences = context.getSharedPreferences("CATEGORY_INFORMATION", Context.MODE_PRIVATE);
                                 String savedCategoryID = sharedPreferences.getString("CATEGORY_ID", "");
 
+                                // Update UI with category details
                                 if (savedCategoryID.equals(categoryIDString)) {
                                     etEventName.setText(eventNameString);
                                     etTickets.setText(String.valueOf(ticketCount));
