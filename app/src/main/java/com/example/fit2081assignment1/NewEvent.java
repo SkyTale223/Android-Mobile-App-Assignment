@@ -74,7 +74,7 @@ public class NewEvent extends AppCompatActivity {
         eventID.append("-");
 
         // Similarly appending random digits to the string
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             int randomDigit = random.nextInt(10);
             eventID.append(randomDigit);
         }
