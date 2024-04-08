@@ -16,7 +16,7 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.appbar_layout_dashboard);
+        setContentView(R.layout.drawer_layout_dashboard);
 
     }
 

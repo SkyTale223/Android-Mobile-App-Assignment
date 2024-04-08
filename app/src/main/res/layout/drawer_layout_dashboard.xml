@@ -6,10 +6,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Include your main content layout -->
-    <include
-        layout="@layout/appbar_layout_dashboard"
+    <include layout="@layout/activity_dashboard"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <!-- NavigationView for the drawer -->
     <com.google.android.material.navigation.NavigationView
