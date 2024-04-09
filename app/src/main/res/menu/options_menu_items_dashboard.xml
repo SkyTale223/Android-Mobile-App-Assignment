@@ -2,12 +2,12 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/option_add_student"
-        android:title="Add Student" />
+        android:id="@+id/clear_event_form"
+        android:title="Clear Event Form" />
     <item
-        android:id="@+id/option_restore_student"
-        android:title="Restore Student" />
+        android:id="@+id/delete_all_categories"
+        android:title="Delete All Categories" />
     <item
-        android:id="@+id/option_clear_student"
-        android:title="Clear Student" />
+        android:id="@+id/delete_all_events"
+        android:title="Delete All Events" />
 </menu>

@@ -47,9 +47,9 @@ public class Dashboard extends AppCompatActivity {
 
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Handle navigation item selection here
+                // Handle item selection using switch case
                 switch (item.getItemId()) {
-                    // Handle navigation item clicks
+                    // Handle what item is clicked
                 }
                 return true;
             }
