@@ -1,31 +1,21 @@
 package com.example.fit2081assignment1;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.metrics.Event;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Random;
-import java.util.StringTokenizer;
 
 public class NewEventCategory extends AppCompatActivity {
 
@@ -34,49 +24,31 @@ public class NewEventCategory extends AppCompatActivity {
     EditText etCategoryName;
     EditText etEventCount;
     Switch swIsActive;
-    ArrayList<EventCategory> temp;
-
-
-
-
+    ArrayList<EventCategory> eventCategoryList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_new_event_category);
 
-        // Finding the view to find what user has inputted
+        // Finding the views
         etCategoryID = findViewById(R.id.editTextCategoryID);
         etCategoryName = findViewById(R.id.editTextCategoryName);
         etEventCount = findViewById(R.id.editTextEventCount);
         swIsActive = findViewById(R.id.switchIsActiveCategory);
 
-
-
-        // Giving permissions to send, receive and read sms messages
-        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.SEND_SMS, android.Manifest.permission.RECEIVE_SMS, android.Manifest.permission.READ_SMS}, 0);
-
-
-        // Registering broadcast receiver
-        NewEventCategory.CategoryBroadcastReceiver categoryBroadCastReceiver = new NewEventCategory.CategoryBroadcastReceiver();
-        registerReceiver(categoryBroadCastReceiver, new IntentFilter(SMSReceiver.CATEGORY_SMS_FILTER), RECEIVER_EXPORTED);
-
-
+        // Initialize the list
+        eventCategoryList = new ArrayList<>();
     }
 
-
     public void onSave(View view) {
-
-
-
         // Start of the random ID generator
-        // Declaring what alphabets and stringbuilder variable
+        // Declaring what alphabets and StringBuilder variable
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder categoryID = new StringBuilder();
         Random random = new Random();
 
-        // Appending C to start of ID
+        // Appending "C" to start of ID
         categoryID.append("C");
 
         // Loop to start appending random characters to the string
@@ -86,7 +58,7 @@ public class NewEventCategory extends AppCompatActivity {
             categoryID.append(randomChar);
         }
 
-        // Appending a - gap in between
+        // Appending a "-" gap in between
         categoryID.append("-");
 
         // Similarly appending random digits to the string
@@ -95,104 +67,48 @@ public class NewEventCategory extends AppCompatActivity {
             categoryID.append(randomDigit);
         }
 
-        // Setting categoryID string on the edit text, starting with C
+        // Setting categoryID string on the edit text, starting with "C"
         etCategoryID.setText(categoryID);
 
-        temp = new ArrayList<>();
-        EventCategory tempCat = new EventCategory(
+        // Log the values being saved
+        Log.d("NewEventCategory", "Category ID: " + categoryID.toString());
+        Log.d("NewEventCategory", "Category Name: " + etCategoryName.getText().toString());
+        Log.d("NewEventCategory", "Event Count: " + etEventCount.getText().toString());
+        Log.d("NewEventCategory", "Is Active: " + swIsActive.isChecked());
+
+        // Creating a new EventCategory object
+        EventCategory newEventCategory = new EventCategory(
                 etCategoryID.getText().toString(),
                 etCategoryName.getText().toString(),
                 etEventCount.getText().toString(),
                 String.valueOf(swIsActive.isChecked())
         );
 
-        temp.add(tempCat);
+        Log.d("NewEventCategory", "EventCategory Object: " + newEventCategory.toString());
 
-        Toast.makeText(this, "Category saved successfully: " + categoryID, Toast.LENGTH_SHORT).show();
 
+        // Adding the new EventCategory object to the list
+        eventCategoryList.add(newEventCategory);
+
+        // Save the updated list to SharedPreferences
+        saveCategoryToSP();
     }
 
-    // Creating the shared preferences for the category class
-    private void saveCategoryInformationToSharedPreferences(EventCategory tempCat) {
-        // Get SharedPreferences instance
-        SharedPreferences sharedPreferences = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
-
-
-
-        // Add the new category to the list
-        temp.add(tempCat);
-
-        // Convert the list of categories to JSON
+    private void saveCategoryToSP() {
+        // Convert the list to JSON string using Gson
         Gson gson = new Gson();
-        String tempCatString = gson.toJson(temp);
+        String json = gson.toJson(eventCategoryList);
+        Log.d("JSON_STRING", json);
 
-        // Save the JSON string back to SharedPreferences
+        // Save the JSON string to SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPreferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("CATEGORIES", tempCatString);
+        editor.putString("event_key", json);
+        Log.d("SAVE_TO_SHARED_PREF", "Saving changes to SharedPreferences...");
         editor.apply();
-    }
+        Log.d("SAVED_TO_SP", "Changes saved to SharedPreferences: " );
 
 
 
-    //Beginning of the broadcast receiver class
-    class CategoryBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Getting the message from SMSReceiver using Intent
-            String incomingMessage = intent.getStringExtra(SMSReceiver.CATEGORY_SMS_MSG_KEY);
-
-            // If the message is not null and starts with "category:" then proceed
-            if (incomingMessage != null && incomingMessage.startsWith("category:")) {
-                // Remove the "category:" prefix
-                incomingMessage = incomingMessage.substring(9);
-
-                // Tokenize the message using ";" as the delimiter
-                StringTokenizer tokenizer = new StringTokenizer(incomingMessage, ";");
-
-                // Check if the number of tokens is correct
-                if (tokenizer.countTokens() == 3) {
-                    // Extract category details from tokens
-                    String categoryName = tokenizer.nextToken();
-                    String eventCount = tokenizer.nextToken();
-                    String categoryIsActive = tokenizer.nextToken();
-
-                    try {
-                        // Parse event count to integer
-                        int count = Integer.parseInt(eventCount);
-
-                        // Check if count is non-negative
-                        if (count >= 0) {
-                            // Convert categoryIsActive string to uppercase and parse to boolean
-                            categoryIsActive = categoryIsActive.toUpperCase();
-
-                            if (categoryIsActive.equals("TRUE") || categoryIsActive.equals("FALSE")) {
-                                boolean active = Boolean.parseBoolean(categoryIsActive);
-
-                                // Update UI with category details
-                                etCategoryName.setText(categoryName);
-                                etEventCount.setText(String.valueOf(count));
-                                swIsActive.setChecked(active);
-
-                            } else {
-                                // Handle invalid isActive value
-                                Toast.makeText(context, "Invalid Category Active value", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // Handle negative event count
-                            Toast.makeText(context, "Event count cannot be negative", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (NumberFormatException e) {
-                        // Handle invalid event input
-                        Toast.makeText(context, "Invalid Event Count", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // Handle invalid message format
-                    Toast.makeText(context, "Invalid message format", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                // Handle unknown or invalid command
-                Toast.makeText(context, "Unknown or invalid command", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }
