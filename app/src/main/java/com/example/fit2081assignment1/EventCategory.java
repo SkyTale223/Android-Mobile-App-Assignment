@@ -1,38 +1,32 @@
 package com.example.fit2081assignment1;
 
 public class EventCategory {
-        private String eventID;
-        private String eventName;
         private String categoryID;
-        private int tickets;
+        private String categoryName;
+        private String categoryEventCount;
+        private String categoryActive;
 
-        public EventCategory(String eventID, String eventName, String categoryID, int tickets, boolean ticketsAvailable) {
-                this.eventID = eventID;
-                this.eventName = eventName;
+        public EventCategory(String categoryID, String categoryName, String categoryEventCount, String categoryActive) {
                 this.categoryID = categoryID;
-                this.tickets = tickets;
-                this.ticketsAvailable = ticketsAvailable;
+                this.categoryName = categoryName;
+                this.categoryEventCount = categoryEventCount;
+                this.categoryActive = categoryActive;
         }
 
-        public String getEventID() {
-                return eventID;
-        }
-
-        public String getEventName() {
-                return eventName;
-        }
 
         public String getCategoryID() {
                 return categoryID;
         }
 
-        public int getTickets() {
-                return tickets;
+        public String getCategoryName() {
+                return categoryName;
         }
 
-        public boolean isTicketsAvailable() {
-                return ticketsAvailable;
+        public String getCategoryEventCount() {
+                return categoryEventCount;
         }
 
-        private boolean ticketsAvailable;
-    }
+        public String isCategoryActive() {
+                return categoryActive;
+        }
+}

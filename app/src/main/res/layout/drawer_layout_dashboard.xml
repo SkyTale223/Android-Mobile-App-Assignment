@@ -6,6 +6,8 @@
     android:layout_height="match_parent">
 
 
+
+
     <!-- Main content layout -->
     <include layout="@layout/app_bar_layout_dashboard" />
 
@@ -17,6 +19,15 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/options_menu_dashboard" />
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 

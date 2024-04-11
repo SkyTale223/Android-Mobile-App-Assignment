@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.metrics.Event;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +17,13 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -25,9 +33,12 @@ public class NewEventCategory extends AppCompatActivity {
     EditText etCategoryID;
     EditText etCategoryName;
     EditText etEventCount;
-
-
     Switch swIsActive;
+    ArrayList<EventCategory> temp;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +52,8 @@ public class NewEventCategory extends AppCompatActivity {
         etEventCount = findViewById(R.id.editTextEventCount);
         swIsActive = findViewById(R.id.switchIsActiveCategory);
 
+
+
         // Giving permissions to send, receive and read sms messages
         ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.SEND_SMS, android.Manifest.permission.RECEIVE_SMS, android.Manifest.permission.READ_SMS}, 0);
 
@@ -52,7 +65,11 @@ public class NewEventCategory extends AppCompatActivity {
 
     }
 
+
     public void onSave(View view) {
+
+
+
         // Start of the random ID generator
         // Declaring what alphabets and stringbuilder variable
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -81,26 +98,41 @@ public class NewEventCategory extends AppCompatActivity {
         // Setting categoryID string on the edit text, starting with C
         etCategoryID.setText(categoryID);
 
-        String categoryString = etCategoryID.getText().toString();
-        String categoryNameString = etCategoryName.getText().toString();
-        String categoryEventCountString = etEventCount.getText().toString();
-        String isActiveString = String.valueOf(swIsActive.isChecked());
+        temp = new ArrayList<>();
+        EventCategory tempCat = new EventCategory(
+                etCategoryID.getText().toString(),
+                etCategoryName.getText().toString(),
+                etEventCount.getText().toString(),
+                String.valueOf(swIsActive.isChecked())
+        );
 
-        saveCategoryInformationToSharedPreferences(categoryString, categoryNameString, categoryEventCountString, isActiveString);
+        temp.add(tempCat);
 
         Toast.makeText(this, "Category saved successfully: " + categoryID, Toast.LENGTH_SHORT).show();
+
     }
 
     // Creating the shared preferences for the category class
-    private void saveCategoryInformationToSharedPreferences(String categoryIDValue, String categoryNameValue, String eventCountValue, String categoryActiveValue) {
-        SharedPreferences saveUserInformationToSharedPreference = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
-        SharedPreferences.Editor editor = saveUserInformationToSharedPreference.edit();
-        editor.putString("CATEGORY_ID", categoryIDValue);
-        editor.putString("CATEGORY_NAME", categoryNameValue);
-        editor.putString("CATEGORY_EVENT_COUNT", eventCountValue);
-        editor.putString("CATEGORY_ACTIVE_STATUS", categoryActiveValue);
+    private void saveCategoryInformationToSharedPreferences(EventCategory tempCat) {
+        // Get SharedPreferences instance
+        SharedPreferences sharedPreferences = getSharedPreferences("CATEGORY_INFORMATION", MODE_PRIVATE);
+
+
+
+        // Add the new category to the list
+        temp.add(tempCat);
+
+        // Convert the list of categories to JSON
+        Gson gson = new Gson();
+        String tempCatString = gson.toJson(temp);
+
+        // Save the JSON string back to SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("CATEGORIES", tempCatString);
         editor.apply();
     }
+
+
 
     //Beginning of the broadcast receiver class
     class CategoryBroadcastReceiver extends BroadcastReceiver {
