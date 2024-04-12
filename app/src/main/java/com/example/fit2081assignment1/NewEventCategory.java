@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -37,6 +38,7 @@ public class NewEventCategory extends AppCompatActivity {
         etCategoryName = findViewById(R.id.editTextCategoryName);
         etEventCount = findViewById(R.id.editTextEventCount);
         swIsActive = findViewById(R.id.switchIsActiveCategory);
+
 
         // Initialize the list
         eventCategoryList = new ArrayList<>();
@@ -76,14 +78,30 @@ public class NewEventCategory extends AppCompatActivity {
         Log.d("NewEventCategory", "Category Name: " + etCategoryName.getText().toString());
         Log.d("NewEventCategory", "Event Count: " + etEventCount.getText().toString());
         Log.d("NewEventCategory", "Is Active: " + swIsActive.isChecked());
-
          */
+
+        String strCategoryID = etCategoryID.getText().toString();
+        String strCategoryName = etCategoryName.getText().toString();
+        String stringEventCount = etEventCount.getText().toString();
+
+        if (strCategoryID.isEmpty() || strCategoryName.isEmpty() || stringEventCount.isEmpty()) {
+            // Show error message if it is empty
+            Toast.makeText(this, "Please ensure everything is filled out.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int intEventCount = Integer.parseInt(stringEventCount);
+        if (intEventCount <= 0) {
+            // Show error message or handle negative or zero input
+            Toast.makeText(this, "Event Count must be a positive integer", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Creating a new EventCategory object
         EventCategory newEventCategory = new EventCategory(
-                etCategoryID.getText().toString(),
-                etCategoryName.getText().toString(),
-                Integer.parseInt(etEventCount.getText().toString()),
+                strCategoryID,
+                strCategoryName,
+                intEventCount,
                 swIsActive.isChecked()
         );
 
@@ -97,11 +115,11 @@ public class NewEventCategory extends AppCompatActivity {
     }
 
     private void saveDataToSharedPreference(EventCategory newEventCategory) {
-        SharedPreferences sharedPreferences = getSharedPreferences("TEST", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("spCategory", MODE_PRIVATE);
 
         // Retrieve existing data from SharedPreferences
         Gson gson = new Gson();
-        String existingDataJson = sharedPreferences.getString("TEST", "[]");
+        String existingDataJson = sharedPreferences.getString("keyCategory", "[]");
         Type type = new TypeToken<ArrayList<EventCategory>>() {
         }.getType();
         ArrayList<EventCategory> existingData = gson.fromJson(existingDataJson, type);
@@ -117,7 +135,7 @@ public class NewEventCategory extends AppCompatActivity {
 
         // Save the updated data back to SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("TEST", updatedDataJson);
+        editor.putString("keyCategory", updatedDataJson);
         editor.apply();
     }
 }

@@ -100,8 +100,8 @@ public class FragmentListCategory extends Fragment {
         categoryRecyclerView.setAdapter(categoryAdapter);
 
 
-        SharedPreferences categorySharedPreference = getActivity().getSharedPreferences("TEST", MODE_PRIVATE);
-        String restoredCategoryString = categorySharedPreference.getString("TEST", "[]");
+        SharedPreferences categorySharedPreference = getActivity().getSharedPreferences("spCategory", MODE_PRIVATE);
+        String restoredCategoryString = categorySharedPreference.getString("keyCategory", "[]");
 
 
         Gson gson = new Gson();

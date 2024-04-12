@@ -55,33 +55,31 @@ public class Dashboard extends AppCompatActivity {
 
         NavigationView dashboardNavigationView = findViewById(R.id.nav_view);
         dashboardNavigationView.setNavigationItemSelectedListener(new DashboardNavigationHandler());
+
+
+        // Initalise the fragment on startup
+        refreshFragmentCategory();
     }
 
 
-class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelectedListener {
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        int navID = menuItem.getItemId();
-        if (navID == R.id.view_all_categories) {
-            // Handle view all categories
-        } else if (navID == R.id.add_category) {
-            Context context = Dashboard.this;
-            Intent newEventCategoryIntent = new Intent(context, NewEventCategory.class);
-            startActivity(newEventCategoryIntent);
-        } else if (navID == R.id.logout) {
-            // Handle logout
+    class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelectedListener {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            int navID = menuItem.getItemId();
+            if (navID == R.id.view_all_categories) {
+                // Handle view all categories
+            } else if (navID == R.id.add_category) {
+                Context context = Dashboard.this;
+                Intent newEventCategoryIntent = new Intent(context, NewEventCategory.class);
+                startActivity(newEventCategoryIntent);
+            } else if (navID == R.id.logout) {
+                // Handle logout
+            }
+            dashboardDrawerLayout.closeDrawers();
+            return true;
         }
-        dashboardDrawerLayout.closeDrawers();
-        return true;
+
     }
-
-}
-
-    public void loadSaveDataFragment(View view) {
-        getSupportFragmentManager().beginTransaction().replace(
-                R.id.frame_category_layout, new FragmentListCategory()).commit();
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,6 +91,7 @@ class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelec
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         int menuID = menuItem.getItemId();
         if (menuID == R.id.refresh) {
+            refreshFragmentCategory();
         } else if (menuID == R.id.clear_event_form) {
             clearEventForm();
         } else if (menuID == R.id.delete_all_categories) {
@@ -109,10 +108,19 @@ class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelec
     }
 
     private void deleteAllCategories() {
-        // Your existing code to delete all categories
+        SharedPreferences deletePrefrences = getSharedPreferences("spCategory", MODE_PRIVATE);
+        SharedPreferences.Editor deleteEditor = deletePrefrences.edit();
+        // Remove the key
+        deleteEditor.remove("keyCategory");
+        deleteEditor.apply();
+        refreshFragmentCategory();
     }
 
     private void deleteAllEvents() {
-        // Your existing code to delete all events
+    }
+
+    private void refreshFragmentCategory() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_category_layout, new FragmentListCategory()).commit();
+
     }
 }

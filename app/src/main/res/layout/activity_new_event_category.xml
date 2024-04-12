@@ -109,7 +109,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Enter event count"
-        android:inputType="text"
+        android:inputType="number|numberSigned"
         android:textColorHint="#97000000"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
