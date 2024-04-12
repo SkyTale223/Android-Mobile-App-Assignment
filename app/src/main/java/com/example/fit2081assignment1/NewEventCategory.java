@@ -3,6 +3,7 @@ package com.example.fit2081assignment1;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -70,45 +71,54 @@ public class NewEventCategory extends AppCompatActivity {
         // Setting categoryID string on the edit text, starting with "C"
         etCategoryID.setText(categoryID);
 
-        // Log the values being saved
+        /* Debugging
         Log.d("NewEventCategory", "Category ID: " + categoryID.toString());
         Log.d("NewEventCategory", "Category Name: " + etCategoryName.getText().toString());
         Log.d("NewEventCategory", "Event Count: " + etEventCount.getText().toString());
         Log.d("NewEventCategory", "Is Active: " + swIsActive.isChecked());
 
+         */
+
         // Creating a new EventCategory object
         EventCategory newEventCategory = new EventCategory(
                 etCategoryID.getText().toString(),
                 etCategoryName.getText().toString(),
-                etEventCount.getText().toString(),
-                String.valueOf(swIsActive.isChecked())
+                Integer.parseInt(etEventCount.getText().toString()),
+                swIsActive.isChecked()
         );
 
-        Log.d("NewEventCategory", "EventCategory Object: " + newEventCategory.toString());
+        //Log.d("NewEventCategory", "EventCategory Object: " + newEventCategory.toString());
 
 
-        // Adding the new EventCategory object to the list
-        eventCategoryList.add(newEventCategory);
+        // Add the new EventCategory to SharedPreferences
+        saveDataToSharedPreference(newEventCategory);
+        //Log.d("SharedPreferences", "Category JSON: " + categoryJsonString);
 
-        // Save the updated list to SharedPreferences
-        saveCategoryToSP();
     }
 
-    private void saveCategoryToSP() {
-        // Convert the list to JSON string using Gson
+    private void saveDataToSharedPreference(EventCategory newEventCategory) {
+        SharedPreferences sharedPreferences = getSharedPreferences("TEST", MODE_PRIVATE);
+
+        // Retrieve existing data from SharedPreferences
         Gson gson = new Gson();
-        String json = gson.toJson(eventCategoryList);
-        Log.d("JSON_STRING", json);
+        String existingDataJson = sharedPreferences.getString("TEST", "[]");
+        Type type = new TypeToken<ArrayList<EventCategory>>() {
+        }.getType();
+        ArrayList<EventCategory> existingData = gson.fromJson(existingDataJson, type);
 
-        // Save the JSON string to SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPreferences", Context.MODE_PRIVATE);
+        // Append the new data to the existing data
+        if (existingData == null) {
+            existingData = new ArrayList<>();
+        }
+        existingData.add(newEventCategory);
+
+        // Convert the updated data to JSON
+        String updatedDataJson = gson.toJson(existingData);
+
+        // Save the updated data back to SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("event_key", json);
-        Log.d("SAVE_TO_SHARED_PREF", "Saving changes to SharedPreferences...");
+        editor.putString("TEST", updatedDataJson);
         editor.apply();
-        Log.d("SAVED_TO_SP", "Changes saved to SharedPreferences: " );
-
-
-
     }
 }
+

@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Dashboard extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class Dashboard extends AppCompatActivity {
     Switch swEventIsActive;
 
     DrawerLayout dashboardDrawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,27 +55,33 @@ public class Dashboard extends AppCompatActivity {
 
         NavigationView dashboardNavigationView = findViewById(R.id.nav_view);
         dashboardNavigationView.setNavigationItemSelectedListener(new DashboardNavigationHandler());
-
-
     }
 
-    class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelectedListener {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            int navID = menuItem.getItemId();
-            if (navID == R.id.view_all_categories) {
-                // Handle view all categories
-            } else if (navID == R.id.add_category) {
-                Context context = Dashboard.this;
-                Intent newEventCategoryIntent = new Intent(context, NewEventCategory.class);
-                startActivity(newEventCategoryIntent);
-            } else if (navID == R.id.logout) {
-                // Handle logout
-            }
-            dashboardDrawerLayout.closeDrawers();
-            return true;
+
+class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelectedListener {
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int navID = menuItem.getItemId();
+        if (navID == R.id.view_all_categories) {
+            // Handle view all categories
+        } else if (navID == R.id.add_category) {
+            Context context = Dashboard.this;
+            Intent newEventCategoryIntent = new Intent(context, NewEventCategory.class);
+            startActivity(newEventCategoryIntent);
+        } else if (navID == R.id.logout) {
+            // Handle logout
         }
+        dashboardDrawerLayout.closeDrawers();
+        return true;
     }
+
+}
+
+    public void loadSaveDataFragment(View view) {
+        getSupportFragmentManager().beginTransaction().replace(
+                R.id.frame_category_layout, new FragmentListCategory()).commit();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,7 +102,6 @@ public class Dashboard extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(menuItem);
     }
-
 
 
     private void clearEventForm() {
