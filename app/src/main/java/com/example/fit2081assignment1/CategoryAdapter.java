@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.categoryViewHolder> {
-    ArrayList<EventCategory> data = new ArrayList<EventCategory>();
+    ArrayList<EventCategory> categoryData = new ArrayList<EventCategory>();
 
     public void setData(ArrayList<EventCategory> data) {
-        this.data = data;
+        this.categoryData = data;
     }
 
     @NonNull
@@ -28,13 +28,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
 
     @Override
     public void onBindViewHolder(@NonNull categoryViewHolder holder, int position) {
-        // Get ID and Name
-        holder.tv_id.setText(data.get(position).getCategoryID());
-        holder.tv_name.setText(data.get(position).getCategoryName());
+        // Finally setting the views
+        holder.tv_cat_id.setText(categoryData.get(position).getCategoryID());
+        holder.tv_cat_name.setText(categoryData.get(position).getCategoryName());
+        holder.tv_event_count.setText(String.valueOf(categoryData.get(position).getCategoryEventCount()));
 
-        // Get Event Count and boolean and convert to string for TextView
-        holder.tv_event_count.setText(String.valueOf(data.get(position).getCategoryEventCount()));
-        holder.tv_active.setText(String.valueOf(data.get(position).getCategoryActive()));
+        boolean isCategoryActive = categoryData.get(position).getCategoryActive();
+
+        // Use ternary operator to convert into yes or no
+        String categoryActive = isCategoryActive? "Yes" : "No";
+        holder.tv_cat_active.setText(categoryActive);
 
         /* Debugging
         Log.d("CategoryAdapter", "ID: " + data.get(position).getCategoryID());
@@ -49,23 +52,22 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
     @Override
     public int getItemCount() {
         // Return size of array list
-        return data.size();
+        return categoryData.size();
     }
 
     public class categoryViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tv_id;
-        public TextView tv_active;
-        public TextView tv_name;
+        public TextView tv_cat_id;
+        public TextView tv_cat_active;
+        public TextView tv_cat_name;
         public TextView tv_event_count;
 
         public categoryViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            // Finally setting the views
-            tv_id = itemView.findViewById(R.id.textViewCatID);
-            tv_name = itemView.findViewById(R.id.textViewCatName);
-            tv_active = itemView.findViewById(R.id.textViewCatActive);
+            tv_cat_id = itemView.findViewById(R.id.textViewCatID);
+            tv_cat_name = itemView.findViewById(R.id.textViewCatName);
+            tv_cat_active = itemView.findViewById(R.id.textViewCatActive);
             tv_event_count = itemView.findViewById(R.id.textViewEventCount);
         }
     }

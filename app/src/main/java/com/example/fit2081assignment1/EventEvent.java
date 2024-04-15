@@ -1,6 +1,7 @@
 package com.example.fit2081assignment1;
 
 public class EventEvent {
+
     private String eventID;
     private String eventName;
     private String eventCategoryID;

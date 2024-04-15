@@ -82,18 +82,20 @@ public class NewEventCategory extends AppCompatActivity {
 
         String strCategoryID = etCategoryID.getText().toString();
         String strCategoryName = etCategoryName.getText().toString();
-        String stringEventCount = etEventCount.getText().toString();
+        String strEventCount = etEventCount.getText().toString();
 
-        if (strCategoryID.isEmpty() || strCategoryName.isEmpty() || stringEventCount.isEmpty()) {
+        if (strCategoryName.isEmpty() || strEventCount.isEmpty()) {
             // Show error message if it is empty
-            Toast.makeText(this, "Please ensure everything is filled out.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please ensure all inputs are filled out and valid", Toast.LENGTH_SHORT).show();
+            clearCategoryInput();
             return;
         }
 
-        int intEventCount = Integer.parseInt(stringEventCount);
+        int intEventCount = Integer.parseInt(strEventCount);
         if (intEventCount <= 0) {
             // Show error message or handle negative or zero input
             Toast.makeText(this, "Event Count must be a positive integer", Toast.LENGTH_SHORT).show();
+            clearCategoryInput();
             return;
         }
 
@@ -114,28 +116,34 @@ public class NewEventCategory extends AppCompatActivity {
 
     }
 
+    private void clearCategoryInput(){
+        etCategoryID.setText("");
+        etCategoryName.setText("");
+        etEventCount.setText("");
+        swIsActive.setChecked(false);
+    }
+
     private void saveDataToSharedPreference(EventCategory newEventCategory) {
-        SharedPreferences sharedPreferences = getSharedPreferences("spCategory", MODE_PRIVATE);
+        SharedPreferences categorySharedPreferences = getSharedPreferences("spCategory", MODE_PRIVATE);
 
         // Retrieve existing data from SharedPreferences
         Gson gson = new Gson();
-        String existingDataJson = sharedPreferences.getString("keyCategory", "[]");
-        Type type = new TypeToken<ArrayList<EventCategory>>() {
-        }.getType();
-        ArrayList<EventCategory> existingData = gson.fromJson(existingDataJson, type);
+        String existingCategoryDataJson = categorySharedPreferences.getString("keyCategory", "[]");
+        Type typeCategory = new TypeToken<ArrayList<EventCategory>>() {}.getType();
+        ArrayList<EventCategory> existingCategoryData = gson.fromJson(existingCategoryDataJson, typeCategory);
 
         // Append the new data to the existing data
-        if (existingData == null) {
-            existingData = new ArrayList<>();
+        if (existingCategoryData == null) {
+            existingCategoryData = new ArrayList<>();
         }
-        existingData.add(newEventCategory);
+        existingCategoryData.add(newEventCategory);
 
         // Convert the updated data to JSON
-        String updatedDataJson = gson.toJson(existingData);
+        String updatedCategoryDataJson = gson.toJson(existingCategoryData);
 
         // Save the updated data back to SharedPreferences
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("keyCategory", updatedDataJson);
+        SharedPreferences.Editor editor = categorySharedPreferences.edit();
+        editor.putString("keyCategory", updatedCategoryDataJson);
         editor.apply();
     }
 }
