@@ -82,10 +82,15 @@ public class Dashboard extends AppCompatActivity {
                 // Handle view all categories
             } else if (navID == R.id.add_category) {
                 Context context = Dashboard.this;
-                Intent newEventCategoryIntent = new Intent(context, NewEventCategory.class);
-                startActivity(newEventCategoryIntent);
+                Intent viewEventIntent = new Intent(context, NewEventCategory.class);
+                startActivity(viewEventIntent);
+
+            }else if (navID == R.id.view_all_events){
+                Context context = Dashboard.this;
+                Intent viewEventIntent = new Intent(context, ListEventActivity.class);
+                startActivity(viewEventIntent);
             } else if (navID == R.id.logout) {
-                // Handle logout
+
             }
             dashboardDrawerLayout.closeDrawers();
             return true;
@@ -144,7 +149,7 @@ public class Dashboard extends AppCompatActivity {
 
     // Refreshes the category fragment so it displays new fragments
     private void refreshFragmentCategory() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_category_layout, new FragmentListCategory()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.host_container_dashboard, new FragmentListCategory()).commit();
 
     }
 
@@ -260,7 +265,7 @@ public class Dashboard extends AppCompatActivity {
         // Retrieve existing data from SharedPreferences
         String existingEventDataJson = eventSharedPreferences.getString("keyEvent", "[]");
 
-        Type typeEvent = new TypeToken<ArrayList<EventCategory>>() {
+        Type typeEvent = new TypeToken<ArrayList<EventEvent>>() {
         }.getType();
         ArrayList<EventEvent> existingEventData = gson.fromJson(existingEventDataJson, typeEvent);
 

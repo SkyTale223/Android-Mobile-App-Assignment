@@ -2,7 +2,6 @@ package com.example.fit2081assignment1;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -11,8 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +19,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +30,7 @@ public class FragmentListCategory extends Fragment {
     ArrayList<EventCategory> listCategory = new ArrayList<>();
     CategoryAdapter categoryAdapter;
     RecyclerView categoryRecyclerView;
-    LayoutManager layoutManager;
+    LayoutManager categoryLayoutManager;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -84,18 +80,13 @@ public class FragmentListCategory extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_category, container, false);
-
-    }
+        View categoryView = inflater.inflate(R.layout.fragment_list_category, container, false);
 
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-
-        super.onViewCreated(view, savedInstanceState);
-        categoryRecyclerView = view.findViewById(R.id.recycleView);
-        layoutManager = new LinearLayoutManager(getContext());
-        categoryRecyclerView.setLayoutManager(layoutManager);
+        super.onViewCreated(categoryView, savedInstanceState);
+        categoryRecyclerView = categoryView.findViewById(R.id.categoryRecyclerView);
+        categoryLayoutManager = new LinearLayoutManager(getContext());
+        categoryRecyclerView.setLayoutManager(categoryLayoutManager);
         categoryAdapter = new CategoryAdapter();
         categoryRecyclerView.setAdapter(categoryAdapter);
 
@@ -119,5 +110,7 @@ public class FragmentListCategory extends Fragment {
             categoryAdapter.setData(listCategory);
             categoryRecyclerView.setAdapter(categoryAdapter);
         }
+        return categoryView;
     }
 }
+
