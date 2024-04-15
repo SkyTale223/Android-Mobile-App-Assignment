@@ -30,6 +30,12 @@ public class EventCategory {
         this.categoryEventCount = categoryEventCount;
         this.categoryActive = categoryActive;
     }
+
+
+    // Another setter method, in where the new integer will be updated by being replaced with count from dashboard
+    public void setCategoryEventCount(int count) {
+        this.categoryEventCount = count;
+    }
 }
 
 

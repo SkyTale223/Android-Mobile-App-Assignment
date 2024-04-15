@@ -42,6 +42,8 @@ public class Login extends AppCompatActivity {
         if (stringLoginuserName.equals(restoredUsername) && stringLoginPassword.equals(restoredPassword)) {
             Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
             Intent dashboardIntent = new Intent(this, Dashboard.class);
+            etLoginUsername.setText("");
+            etLoginPassword.setText("");
             startActivity(dashboardIntent);
         } else {
             Toast.makeText(this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();

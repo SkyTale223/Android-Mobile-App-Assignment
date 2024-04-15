@@ -107,6 +107,7 @@
         android:id="@+id/editTextEventCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:digits="0123456789"
         android:ems="10"
         android:hint="Enter event count"
         android:inputType="number|numberSigned"

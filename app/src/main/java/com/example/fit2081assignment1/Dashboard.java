@@ -49,8 +49,11 @@ public class Dashboard extends AppCompatActivity {
         etTickets = findViewById(R.id.editTextTickets);
         swEventIsActive = findViewById(R.id.switchIsActiveEvent);
 
-        Toolbar dashboardToolbar = findViewById(R.id.toolbar);
+        Toolbar dashboardToolbar = findViewById(R.id.dashboardToolbar);
         setSupportActionBar(dashboardToolbar);
+        // Setting the title
+        getSupportActionBar().setTitle("33162050 Assignment 2");
+
 
         dashboardFab = findViewById(R.id.fab);
         dashboardFab.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +82,9 @@ public class Dashboard extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             int navID = menuItem.getItemId();
             if (navID == R.id.view_all_categories) {
-                // Handle view all categories
+                Context context = Dashboard.this;
+                Intent viewCategoryIntent = new Intent(context, ListCategoryActivity.class);
+                startActivity(viewCategoryIntent);
             } else if (navID == R.id.add_category) {
                 Context context = Dashboard.this;
                 Intent viewEventIntent = new Intent(context, NewEventCategory.class);
@@ -90,7 +95,7 @@ public class Dashboard extends AppCompatActivity {
                 Intent viewEventIntent = new Intent(context, ListEventActivity.class);
                 startActivity(viewEventIntent);
             } else if (navID == R.id.logout) {
-
+                logout();
             }
             dashboardDrawerLayout.closeDrawers();
             return true;
@@ -125,7 +130,11 @@ public class Dashboard extends AppCompatActivity {
 
     // Clear the event form
     private void clearEventForm() {
-        // Your existing code to clear the event form
+        etEventID.setText("");
+        etCategory.setText("");
+        etEventName.setText("");
+        etTickets.setText("");
+        swEventIsActive.setChecked(false);
     }
 
     // Delete all categories
@@ -150,16 +159,14 @@ public class Dashboard extends AppCompatActivity {
     // Refreshes the category fragment so it displays new fragments
     private void refreshFragmentCategory() {
         getSupportFragmentManager().beginTransaction().replace(R.id.host_container_dashboard, new FragmentListCategory()).commit();
-
     }
 
-    private void clearEventInput() {
-        etEventID.setText("");
-        etEventName.setText("");
-        etCategory.setText("");
-        etTickets.setText("");
-        swEventIsActive.setChecked(false);
+    private void logout(){
+        Intent login = new Intent(this, Login.class);
+        startActivity(login);
+        finish();
     }
+
 
 
     private void saveEvent() {
@@ -194,13 +201,14 @@ public class Dashboard extends AppCompatActivity {
         saveEventInformation();
     }
 
+
+
     private void saveEventInformation() {
         // Retrieve event information from EditText and Switch
         String strEventID = etEventID.getText().toString();
         String strEventName = etEventName.getText().toString();
         String strEventCategoryID = etCategory.getText().toString();
         String strTicketCount = etTickets.getText().toString();
-
 
         SharedPreferences sharedPreferences = getSharedPreferences("spCategory", MODE_PRIVATE);
         Gson gson = new Gson();
@@ -210,10 +218,11 @@ public class Dashboard extends AppCompatActivity {
         ArrayList<EventCategory> currentCategoryData = gson.fromJson(existingCategoryDataJson, typeCategory);
 
 
+
         if (strEventName.isEmpty() || strEventCategoryID.isEmpty() || strTicketCount.isEmpty()) {
             // Show error message if it is empty
             Toast.makeText(this, "Please ensure all inputs are filled out and valid", Toast.LENGTH_SHORT).show();
-            clearEventInput();
+            clearEventForm();
             return;
         }
 
@@ -221,7 +230,22 @@ public class Dashboard extends AppCompatActivity {
         if (intTicketCount <= 0) {
             // Show error message or handle negative or zero input
             Toast.makeText(this, "Ticket count must be a positive integer", Toast.LENGTH_SHORT).show();
-            clearEventInput();
+            clearEventForm();
+            return;
+        }
+
+        boolean hasAlphabets = false;
+        // Iterating over each character and comparing them with the built in char in java
+        for (char c : strEventName.toCharArray()){
+            if (Character.isLetter(c)){
+                hasAlphabets = true;
+                break;
+            }
+        }
+
+        if (!hasAlphabets){
+            Toast.makeText(this, "Event Name must contain alphabets", Toast.LENGTH_SHORT).show();
+            clearEventForm();
             return;
         }
 
@@ -242,17 +266,26 @@ public class Dashboard extends AppCompatActivity {
                         intTicketCount,
                         swEventIsActive.isChecked()
                 );
+
+                int currentEventCount = category.getCategoryEventCount();
+                category.setCategoryEventCount(currentEventCount + 1);
                 saveEventInformationToSharedPreferences(newEvent);
+                // Breaking out of loop upon valid category
+                Toast.makeText(this, "Event Saved: " + strEventID + " to " + category.getCategoryID()  ,Toast.LENGTH_SHORT).show();
                 break;
             }
         }
 
+        String updatedCategoryDataJson = gson.toJson(currentCategoryData);
+        sharedPreferences.edit().putString("keyCategory", updatedCategoryDataJson).apply();
+
         if (!isValidCategoryID) {
             // If no matching category ID is found, display error message
-            clearEventInput();
+            clearEventForm();
             Toast.makeText(this, "Category ID invalid", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
 

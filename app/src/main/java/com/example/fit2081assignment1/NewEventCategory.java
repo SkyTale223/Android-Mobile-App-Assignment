@@ -91,6 +91,22 @@ public class NewEventCategory extends AppCompatActivity {
             return;
         }
 
+        // Start off by declaring a boolean to determine if alphabets are present
+        boolean hasAlphabets = false;
+        // Iterating over each character and comparing them with the built in char in java
+        for (char c : strCategoryName.toCharArray()){
+            if (Character.isLetter(c)){
+                hasAlphabets = true;
+                break;
+            }
+        }
+
+        if (!hasAlphabets){
+            Toast.makeText(this, "Category Name must contain alphabets", Toast.LENGTH_SHORT).show();
+            clearCategoryInput();
+            return;
+        }
+
         int intEventCount = Integer.parseInt(strEventCount);
         if (intEventCount <= 0) {
             // Show error message or handle negative or zero input
@@ -113,6 +129,8 @@ public class NewEventCategory extends AppCompatActivity {
         // Add the new EventCategory to SharedPreferences
         saveDataToSharedPreference(newEventCategory);
         //Log.d("SharedPreferences", "Category JSON: " + categoryJsonString);
+        Toast.makeText(this, "Category saved successfully: " + strCategoryID, Toast.LENGTH_SHORT).show();
+
 
     }
 
@@ -145,6 +163,7 @@ public class NewEventCategory extends AppCompatActivity {
         SharedPreferences.Editor editor = categorySharedPreferences.edit();
         editor.putString("keyCategory", updatedCategoryDataJson);
         editor.apply();
+
     }
 }
 
