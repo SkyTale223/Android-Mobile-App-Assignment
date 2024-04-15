@@ -76,16 +76,22 @@ public class FragmentListEvent extends Fragment {
         View eventView = inflater.inflate(R.layout.fragment_list_event, container, false);
 
         super.onViewCreated(eventView, savedInstanceState);
+        // Finding view of category first
         eventRecyclerView = eventView.findViewById(R.id.eventRecyclerView);
+        // Creating new instance of lot manager and passing the current fragment context
         eventLayoutManager = new LinearLayoutManager(getContext());
+        // Setting the recycler view to the category layout manager
         eventRecyclerView.setLayoutManager(eventLayoutManager);
+        // Creating an instance of Category Adapter here
         eventAdapter = new EventAdapter();
+        // Setting the recycler views adapter to the instance created
         eventRecyclerView.setAdapter(eventAdapter);
 
         SharedPreferences eventSharedPreference = getActivity().getSharedPreferences("spEvent", Context.MODE_PRIVATE);
         String restoredEventString = eventSharedPreference.getString("keyEvent", "[]");
 
         Gson gson = new Gson();
+        // Creating a type which determines the structure and extracting the specific type
         Type typeEvent = new TypeToken<ArrayList<EventEvent>>(){}.getType();
         listEvent = gson.fromJson(restoredEventString, typeEvent);
 

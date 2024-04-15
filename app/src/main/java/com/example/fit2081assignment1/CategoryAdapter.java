@@ -21,7 +21,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
     @NonNull
     @Override
     public categoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View categoryV = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list, parent, false); //CardView inflated as RecyclerView list item
+        // Cardview inflated as a item of recyclerview
+        View categoryV = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list, parent, false);
         categoryViewHolder viewHolder = new categoryViewHolder(categoryV);
         return viewHolder;
     }
@@ -64,7 +65,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
 
         public categoryViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            // Finding items based on the cardview which is declared into the recycler view, allowing manipulation
             tv_cat_id = itemView.findViewById(R.id.textViewCatID);
             tv_cat_name = itemView.findViewById(R.id.textViewCatName);
             tv_cat_active = itemView.findViewById(R.id.textViewCatActive);

@@ -84,10 +84,15 @@ public class FragmentListCategory extends Fragment {
 
 
         super.onViewCreated(categoryView, savedInstanceState);
+        // Finding view of category first
         categoryRecyclerView = categoryView.findViewById(R.id.categoryRecyclerView);
+        // Creating new instance of lot manager and passing the current fragment context
         categoryLayoutManager = new LinearLayoutManager(getContext());
+        // Setting the recycler view to the category layout manager
         categoryRecyclerView.setLayoutManager(categoryLayoutManager);
+        // Creating an instance of Category Adapter here
         categoryAdapter = new CategoryAdapter();
+        // Setting the recycler views adapter to the instance created
         categoryRecyclerView.setAdapter(categoryAdapter);
 
 
@@ -96,6 +101,7 @@ public class FragmentListCategory extends Fragment {
 
 
         Gson gson = new Gson();
+        // Creating a type which determines the structure and extracting the specific type
         Type typeCategory = new TypeToken<ArrayList<EventCategory>>() {
         }.getType();
         // Convert JSON string to ArrayList of category objects using Gson
