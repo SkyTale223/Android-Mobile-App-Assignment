@@ -11,13 +11,25 @@
 
     <FrameLayout
         android:id="@+id/frame_category_layout"
-        android:layout_width="410dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="80dp"
+        android:layout_width="386dp"
+        android:layout_height="247dp"
+        android:layout_marginTop="88dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="45dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.997"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchIsActiveEvent"
+        app:srcCompat="@drawable/baseline_add_24" />
 
     <EditText
         android:id="@+id/editTextEventID"
@@ -135,6 +147,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextEventID" />
 
+
     <TextView
         android:id="@+id/textTicketsAvailable"
         android:layout_width="wrap_content"
@@ -161,5 +174,8 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class Dashboard extends AppCompatActivity {
     EditText etCategory;
     EditText etTickets;
     Switch swEventIsActive;
+    FloatingActionButton dashboardFab;
 
     DrawerLayout dashboardDrawerLayout;
 
@@ -47,6 +49,8 @@ public class Dashboard extends AppCompatActivity {
         Toolbar dashboardToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(dashboardToolbar);
 
+        dashboardFab = findViewById(R.id.fab);
+
         dashboardDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, dashboardDrawerLayout, dashboardToolbar, R.string.nav_open, R.string.nav_close);
@@ -56,12 +60,11 @@ public class Dashboard extends AppCompatActivity {
         NavigationView dashboardNavigationView = findViewById(R.id.nav_view);
         dashboardNavigationView.setNavigationItemSelectedListener(new DashboardNavigationHandler());
 
-
         // Initalise the fragment on startup
         refreshFragmentCategory();
     }
 
-
+// Start the navigation drawer
     class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelectedListener {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -81,12 +84,15 @@ public class Dashboard extends AppCompatActivity {
 
     }
 
+
+    // Inflate the options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.options_menu_items_dashboard, menu);
         return true;
     }
 
+    // Determines what options items are selected
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         int menuID = menuItem.getItemId();
@@ -103,10 +109,12 @@ public class Dashboard extends AppCompatActivity {
     }
 
 
+    // Clear the event form
     private void clearEventForm() {
         // Your existing code to clear the event form
     }
 
+    // Delete all categories
     private void deleteAllCategories() {
         SharedPreferences deletePrefrences = getSharedPreferences("spCategory", MODE_PRIVATE);
         SharedPreferences.Editor deleteEditor = deletePrefrences.edit();
@@ -116,9 +124,11 @@ public class Dashboard extends AppCompatActivity {
         refreshFragmentCategory();
     }
 
+    // Delete all events
     private void deleteAllEvents() {
     }
 
+    // Refreshes the category fragment so it displays new fragments
     private void refreshFragmentCategory() {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_category_layout, new FragmentListCategory()).commit();
 
