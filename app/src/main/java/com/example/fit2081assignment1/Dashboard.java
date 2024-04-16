@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -36,6 +37,8 @@ public class Dashboard extends AppCompatActivity {
     Switch swEventIsActive;
     FloatingActionButton dashboardFab;
     DrawerLayout dashboardDrawerLayout;
+
+    EventEvent newEvent;
 
 
     @Override
@@ -199,7 +202,21 @@ public class Dashboard extends AppCompatActivity {
         etEventID.setText(eventID);
 
         saveEventInformation();
+
+
+
+
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Event saved", Snackbar.LENGTH_LONG);
+        snackbar.setAction("Undo", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Undo the last saved event
+                undo();
+            }
+        });
+        snackbar.show();
     }
+
 
 
 
@@ -259,7 +276,7 @@ public class Dashboard extends AppCompatActivity {
             if (strEventCategoryID.equals(category.getCategoryID())) {
                 // Category ID is valid, save event information and exit loop
                 isValidCategoryID = true;
-                EventEvent newEvent = new EventEvent(
+                newEvent = new EventEvent(
                         strEventID,
                         strEventName,
                         strEventCategoryID,
@@ -285,6 +302,38 @@ public class Dashboard extends AppCompatActivity {
             Toast.makeText(this, "Category ID invalid", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void undo() {
+        if (newEvent != null){
+            SharedPreferences eventSharedPreferences = getSharedPreferences("spEvent", MODE_PRIVATE);
+            Gson gson = new Gson();
+
+            // Retrieve existing data from SharedPreferences
+            String existingEventDataJson = eventSharedPreferences.getString("keyEvent", "[]");
+
+            Type typeEvent = new TypeToken<ArrayList<EventEvent>>() {}.getType();
+            ArrayList<EventEvent> existingEventData = gson.fromJson(existingEventDataJson, typeEvent);
+
+            if (existingEventData != null) {
+                // Remove the last saved event from the list
+                existingEventData.remove(newEvent);
+
+                String updatedEventDataJson = gson.toJson(existingEventData);
+
+                // Save the updated data back to SharedPreferences
+                SharedPreferences.Editor editor = eventSharedPreferences.edit();
+                editor.putString("keyEvent", updatedEventDataJson);
+                editor.apply();
+
+                // Notify the user that the event has been undone
+                Toast.makeText(this, "Undone last saved event", Toast.LENGTH_SHORT).show();
+
+                // Clear the fields to reflect the undone event
+                clearEventForm();
+            }
+        }
+    }
+
 
 
 
