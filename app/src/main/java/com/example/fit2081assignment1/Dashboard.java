@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -37,8 +36,6 @@ public class Dashboard extends AppCompatActivity {
     Switch swEventIsActive;
     FloatingActionButton dashboardFab;
     DrawerLayout dashboardDrawerLayout;
-
-    EventEvent newEvent;
 
 
     @Override
@@ -93,7 +90,7 @@ public class Dashboard extends AppCompatActivity {
                 Intent viewEventIntent = new Intent(context, NewEventCategory.class);
                 startActivity(viewEventIntent);
 
-            }else if (navID == R.id.view_all_events){
+            } else if (navID == R.id.view_all_events) {
                 Context context = Dashboard.this;
                 Intent viewEventIntent = new Intent(context, ListEventActivity.class);
                 startActivity(viewEventIntent);
@@ -164,12 +161,11 @@ public class Dashboard extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.host_container_dashboard, new FragmentListCategory()).commit();
     }
 
-    private void logout(){
+    private void logout() {
         Intent login = new Intent(this, Login.class);
         startActivity(login);
         finish();
     }
-
 
 
     private void saveEvent() {
@@ -202,22 +198,7 @@ public class Dashboard extends AppCompatActivity {
         etEventID.setText(eventID);
 
         saveEventInformation();
-
-
-
-
-        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Event saved", Snackbar.LENGTH_LONG);
-        snackbar.setAction("Undo", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Undo the last saved event
-                undo();
-            }
-        });
-        snackbar.show();
     }
-
-
 
 
     private void saveEventInformation() {
@@ -233,7 +214,6 @@ public class Dashboard extends AppCompatActivity {
         Type typeCategory = new TypeToken<ArrayList<EventCategory>>() {
         }.getType();
         ArrayList<EventCategory> currentCategoryData = gson.fromJson(existingCategoryDataJson, typeCategory);
-
 
 
         if (strEventName.isEmpty() || strEventCategoryID.isEmpty() || strTicketCount.isEmpty()) {
@@ -253,14 +233,14 @@ public class Dashboard extends AppCompatActivity {
 
         boolean hasAlphabets = false;
         // Iterating over each character and comparing them with the built in char in java
-        for (char c : strEventName.toCharArray()){
-            if (Character.isLetter(c)){
+        for (char c : strEventName.toCharArray()) {
+            if (Character.isLetter(c)) {
                 hasAlphabets = true;
                 break;
             }
         }
 
-        if (!hasAlphabets){
+        if (!hasAlphabets) {
             Toast.makeText(this, "Event Name must contain alphabets", Toast.LENGTH_SHORT).show();
             clearEventForm();
             return;
@@ -276,7 +256,7 @@ public class Dashboard extends AppCompatActivity {
             if (strEventCategoryID.equals(category.getCategoryID())) {
                 // Category ID is valid, save event information and exit loop
                 isValidCategoryID = true;
-                newEvent = new EventEvent(
+                EventEvent newEvent = new EventEvent(
                         strEventID,
                         strEventName,
                         strEventCategoryID,
@@ -288,7 +268,7 @@ public class Dashboard extends AppCompatActivity {
                 category.setCategoryEventCount(currentEventCount + 1);
                 saveEventInformationToSharedPreferences(newEvent);
                 // Breaking out of loop upon valid category
-                Toast.makeText(this, "Event Saved: " + strEventID + " to " + category.getCategoryID()  ,Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Event Saved: " + strEventID + " to " + category.getCategoryID(), Toast.LENGTH_SHORT).show();
                 break;
             }
         }
@@ -302,40 +282,6 @@ public class Dashboard extends AppCompatActivity {
             Toast.makeText(this, "Category ID invalid", Toast.LENGTH_SHORT).show();
         }
     }
-
-    private void undo() {
-        if (newEvent != null){
-            SharedPreferences eventSharedPreferences = getSharedPreferences("spEvent", MODE_PRIVATE);
-            Gson gson = new Gson();
-
-            // Retrieve existing data from SharedPreferences
-            String existingEventDataJson = eventSharedPreferences.getString("keyEvent", "[]");
-
-            Type typeEvent = new TypeToken<ArrayList<EventEvent>>() {}.getType();
-            ArrayList<EventEvent> existingEventData = gson.fromJson(existingEventDataJson, typeEvent);
-
-            if (existingEventData != null) {
-                // Remove the last saved event from the list
-                existingEventData.remove(newEvent);
-
-                String updatedEventDataJson = gson.toJson(existingEventData);
-
-                // Save the updated data back to SharedPreferences
-                SharedPreferences.Editor editor = eventSharedPreferences.edit();
-                editor.putString("keyEvent", updatedEventDataJson);
-                editor.apply();
-
-                // Notify the user that the event has been undone
-                Toast.makeText(this, "Undone last saved event", Toast.LENGTH_SHORT).show();
-
-                // Clear the fields to reflect the undone event
-                clearEventForm();
-            }
-        }
-    }
-
-
-
 
 
     private void saveEventInformationToSharedPreferences(EventEvent newEvent) {
@@ -371,4 +317,3 @@ public class Dashboard extends AppCompatActivity {
 
 
 }
-
