@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".FragmentListEvent">
 
-    <!-- Duplicate CardView on top -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewTop"
         android:layout_width="match_parent"

@@ -7,25 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".Dashboard">
 
-    <!-- Main content layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <!-- Toolbar -->
         <include layout="@layout/app_bar_layout_dashboard" />
-
-        <!-- Fragment container -->
-        <FrameLayout
-            android:id="@+id/host_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- NavigationView for the drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
