@@ -1,6 +1,7 @@
 package com.example.fit2081assignment1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -94,14 +95,14 @@ public class NewEventCategory extends AppCompatActivity {
         // Start off by declaring a boolean to determine if alphabets are present
         boolean hasAlphabets = false;
         // Iterating over each character and comparing them with the built in char in java
-        for (char c : strCategoryName.toCharArray()){
-            if (Character.isLetter(c)){
+        for (char c : strCategoryName.toCharArray()) {
+            if (Character.isLetter(c)) {
                 hasAlphabets = true;
                 break;
             }
         }
 
-        if (!hasAlphabets){
+        if (!hasAlphabets) {
             Toast.makeText(this, "Category Name must contain alphabets", Toast.LENGTH_SHORT).show();
             clearCategoryInput();
             return;
@@ -131,10 +132,13 @@ public class NewEventCategory extends AppCompatActivity {
         //Log.d("SharedPreferences", "Category JSON: " + categoryJsonString);
         Toast.makeText(this, "Category saved successfully: " + strCategoryID, Toast.LENGTH_SHORT).show();
 
+        Intent dashboardIntent = new Intent(getApplicationContext(), Dashboard.class);
+        startActivity(dashboardIntent);
+
 
     }
 
-    private void clearCategoryInput(){
+    private void clearCategoryInput() {
         etCategoryID.setText("");
         etCategoryName.setText("");
         etEventCount.setText("");
@@ -147,7 +151,8 @@ public class NewEventCategory extends AppCompatActivity {
         // Retrieve existing data from SharedPreferences
         Gson gson = new Gson();
         String existingCategoryDataJson = categorySharedPreferences.getString("keyCategory", "[]");
-        Type typeCategory = new TypeToken<ArrayList<EventCategory>>() {}.getType();
+        Type typeCategory = new TypeToken<ArrayList<EventCategory>>() {
+        }.getType();
         ArrayList<EventCategory> existingCategoryData = gson.fromJson(existingCategoryDataJson, typeCategory);
 
         // Append the new data to the existing data

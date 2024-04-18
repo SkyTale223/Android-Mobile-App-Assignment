@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -268,7 +269,6 @@ public class Dashboard extends AppCompatActivity {
                 category.setCategoryEventCount(currentEventCount + 1);
                 saveEventInformationToSharedPreferences(newEvent);
                 // Breaking out of loop upon valid category
-                Toast.makeText(this, "Event Saved: " + strEventID + " to " + category.getCategoryID(), Toast.LENGTH_SHORT).show();
                 break;
             }
         }
@@ -313,7 +313,52 @@ public class Dashboard extends AppCompatActivity {
         SharedPreferences.Editor editor = eventSharedPreferences.edit();
         editor.putString("keyEvent", updatedEventDataJson);
         editor.apply();
+        // Call the snackbar here to avoid further validation, if event is null as this only appears upon successful save
+        showUndoSnackbar(newEvent);
+
     }
 
+    private void showUndoSnackbar(final EventEvent lastSavedEvent) {
+        // Creating a snackbar to say event is saved
+        Snackbar snackbar = Snackbar.make(dashboardFab, "Event saved", Snackbar.LENGTH_LONG);
 
+
+        // Making a snackbar action to say undo
+        snackbar.setAction("Undo", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Undo the last event that is saved by the user
+                undoLastSavedEvent(lastSavedEvent);
+                // Say that the last event has being undone
+                Toast.makeText(Dashboard.this, "Last saved event undone", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Show the snackbar
+        snackbar.show();
+    }
+
+    private void undoLastSavedEvent(EventEvent lastSavedEvent) {
+        // Retrieve the SharedPreferences instance
+        SharedPreferences eventSharedPreferences = getSharedPreferences("spEvent", MODE_PRIVATE);
+
+        // Retrieve the existing event data JSON string
+        String existingEventDataJson = eventSharedPreferences.getString("keyEvent", "[]");
+
+        // Convert the JSON string to ArrayList<EventEvent>
+        Gson gson = new Gson();
+        Type typeEvent = new TypeToken<ArrayList<EventEvent>>() {
+        }.getType();
+        ArrayList<EventEvent> existingEventData = gson.fromJson(existingEventDataJson, typeEvent);
+
+        // Subtract the latest index that was placed into the array
+        // As arraylist is maintain order
+        existingEventData.remove(existingEventData.size() - 1);
+
+        String updatedEventDataJson = gson.toJson(existingEventData);
+
+        SharedPreferences.Editor editor = eventSharedPreferences.edit();
+        editor.putString("keyEvent", updatedEventDataJson);
+        editor.apply();
+    }
 }
