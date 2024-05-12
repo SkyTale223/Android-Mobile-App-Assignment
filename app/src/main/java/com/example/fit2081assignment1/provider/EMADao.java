@@ -12,7 +12,11 @@ import java.util.List;
 
 @Dao
 public interface EMADao {
-    @Insert
-    void insert(EventCategory eventCategory);
 
+    @Query("select * from eventCategory")
+    LiveData<List<EventCategory>> getEventCategory();
+
+    @Insert
+    void addEventCategory(EventCategory eventCategory);
 }
+

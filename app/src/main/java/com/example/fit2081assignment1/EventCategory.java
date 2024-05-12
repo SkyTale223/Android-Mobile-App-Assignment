@@ -1,9 +1,26 @@
 package com.example.fit2081assignment1;
 
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "eventCategory")
 public class EventCategory {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private int id;
+
+    @ColumnInfo(name = "categoryID")
     private String categoryID;
+
+    @ColumnInfo(name = "categoryName")
     private String categoryName;
+
+    @ColumnInfo(name = "categoryEventCount")
     private int categoryEventCount;
+
+    @ColumnInfo(name = "categoryActive")
     private boolean categoryActive;
 
 
