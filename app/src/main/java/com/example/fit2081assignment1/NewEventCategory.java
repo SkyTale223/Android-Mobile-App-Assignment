@@ -15,7 +15,7 @@ public class NewEventCategory extends AppCompatActivity {
     EditText etCategoryName;
     EditText etEventCount;
     Switch swIsActive;
-    private EMAViewModel viewModel;
+    private EMAViewmodel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
