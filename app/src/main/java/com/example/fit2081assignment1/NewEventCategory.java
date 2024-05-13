@@ -1,6 +1,11 @@
 package com.example.fit2081assignment1;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -9,13 +14,24 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Random;
+
 public class NewEventCategory extends AppCompatActivity {
 
     // Declaring variables
+    EditText etCategoryID;
     EditText etCategoryName;
     EditText etEventCount;
     Switch swIsActive;
-    private EMAViewmodel viewModel;
+    ArrayList<EventCategory> eventCategoryList;
+
+    private EMAViewmodel emaViewmodel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,47 +39,112 @@ public class NewEventCategory extends AppCompatActivity {
         setContentView(R.layout.activity_new_event_category);
 
         // Finding the views
+        etCategoryID = findViewById(R.id.editTextCategoryID);
         etCategoryName = findViewById(R.id.editTextCategoryName);
         etEventCount = findViewById(R.id.editTextEventCount);
         swIsActive = findViewById(R.id.switchIsActiveCategory);
 
-        // Initialize ViewModel
-        viewModel = new ViewModelProvider(this).get(EMAViewModel.class);
+
+        // Initialize the list
+        eventCategoryList = new ArrayList<>();
+        emaViewmodel = new ViewModelProvider(this).get(EMAViewmodel.class);
     }
 
     public void onSave(View view) {
-        String categoryName = etCategoryName.getText().toString();
-        String eventCountStr = etEventCount.getText().toString();
-        boolean isActive = swIsActive.isChecked();
+        // Start of the random ID generator
+        // Declaring what alphabets and StringBuilder variable
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder categoryID = new StringBuilder();
+        Random random = new Random();
 
-        if (categoryName.isEmpty() || eventCountStr.isEmpty()) {
-            // Show error message if any field is empty
-            Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
+        // Appending "C" to start of ID
+        categoryID.append("C");
+
+        // Loop to start appending random characters to the string
+        for (int i = 0; i < 2; i++) {
+            int index = random.nextInt(alphabet.length());
+            char randomChar = alphabet.charAt(index);
+            categoryID.append(randomChar);
+        }
+
+        // Appending a "-" gap in between
+        categoryID.append("-");
+
+        // Similarly appending random digits to the string
+        for (int i = 0; i < 4; i++) {
+            int randomDigit = random.nextInt(10);
+            categoryID.append(randomDigit);
+        }
+
+        // Setting categoryID string on the edit text, starting with "C"
+        etCategoryID.setText(categoryID);
+
+        /* Debugging
+        Log.d("NewEventCategory", "Category ID: " + categoryID.toString());
+        Log.d("NewEventCategory", "Category Name: " + etCategoryName.getText().toString());
+        Log.d("NewEventCategory", "Event Count: " + etEventCount.getText().toString());
+        Log.d("NewEventCategory", "Is Active: " + swIsActive.isChecked());
+         */
+
+        String strCategoryID = etCategoryID.getText().toString();
+        String strCategoryName = etCategoryName.getText().toString();
+        String strEventCount = etEventCount.getText().toString();
+
+        if (strCategoryName.isEmpty() || strEventCount.isEmpty()) {
+            // Show error message if it is empty
+            Toast.makeText(this, "Please ensure all inputs are filled out and valid", Toast.LENGTH_SHORT).show();
+            clearCategoryInput();
             return;
         }
 
-        int eventCount = Integer.parseInt(eventCountStr);
-        if (eventCount <= 0) {
-            // Show error message for invalid event count
-            Toast.makeText(this, "Event count must be greater than zero", Toast.LENGTH_SHORT).show();
+        // Start off by declaring a boolean to determine if alphabets are present
+        boolean hasAlphabets = false;
+        // Iterating over each character and comparing them with the built in char in java
+        for (char c : strCategoryName.toCharArray()) {
+            if (Character.isLetter(c)) {
+                hasAlphabets = true;
+                break;
+            }
+        }
+
+        if (!hasAlphabets) {
+            Toast.makeText(this, "Category Name must contain alphabets", Toast.LENGTH_SHORT).show();
+            clearCategoryInput();
             return;
         }
 
-        // Create new EventCategory object
+        int intEventCount = Integer.parseInt(strEventCount);
+        if (intEventCount <= 0) {
+            // Show error message or handle negative or zero input
+            Toast.makeText(this, "Event Count must be a positive integer", Toast.LENGTH_SHORT).show();
+            clearCategoryInput();
+            return;
+        }
+
+
         EventCategory newEventCategory = new EventCategory(
-                null, // Room database will generate the ID automatically
-                categoryName,
-                eventCount,
-                isActive
+                strCategoryID,
+                strCategoryName,
+                intEventCount,
+                swIsActive.isChecked()
         );
 
-        // Insert new EventCategory into database
-        viewModel.insert(newEventCategory);
 
-        // Show success message
-        Toast.makeText(this, "Category saved successfully", Toast.LENGTH_SHORT).show();
+        emaViewmodel.insert(newEventCategory);
+        Toast.makeText(this, "Category saved successfully: " + strCategoryID, Toast.LENGTH_SHORT).show();
 
-        // Finish activity
-        finish();
+        Intent dashboardIntent = new Intent(getApplicationContext(), Dashboard.class);
+        startActivity(dashboardIntent);
     }
+
+    private void clearCategoryInput() {
+        etCategoryID.setText("");
+        etCategoryName.setText("");
+        etEventCount.setText("");
+        swIsActive.setChecked(false);
+    }
+
+
+
 }
+

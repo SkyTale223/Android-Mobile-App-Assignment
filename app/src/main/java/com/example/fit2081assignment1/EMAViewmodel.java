@@ -9,18 +9,12 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class EMAViewmodel extends AndroidViewModel {
-    // reference to CardRepository
     private EMARepository repository;
-    // private class variable to temporary hold all the items retrieved and pass outside of this class
     private LiveData<List<EventCategory>> allEventCategoryLiveData;
 
     public EMAViewmodel(@NonNull Application application) {
         super(application);
-
-        // get reference to the repository class
         repository = new EMARepository(application);
-
-        // get all items by calling method defined in repository class
         allEventCategoryLiveData = repository.getAllEventCategory();
     }
 
@@ -28,9 +22,7 @@ public class EMAViewmodel extends AndroidViewModel {
         return allEventCategoryLiveData;
     }
 
-
     public void insert(EventCategory eventCategory) {
         repository.insert(eventCategory);
     }
-
 }

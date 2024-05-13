@@ -1,16 +1,16 @@
 package com.example.fit2081assignment1;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "eventCategory")
 public class EventCategory {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id;
+    @PrimaryKey(autoGenerate = false)
 
+    @NonNull
     @ColumnInfo(name = "categoryID")
     private String categoryID;
 
