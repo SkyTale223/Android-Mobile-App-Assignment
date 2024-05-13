@@ -23,6 +23,9 @@ public class EventCategory {
     @ColumnInfo(name = "categoryActive")
     private boolean categoryActive;
 
+    @ColumnInfo(name = "categoryLocation")
+    private String categoryLocation;
+
 
     public String getCategoryID() {
         return categoryID;
@@ -39,13 +42,15 @@ public class EventCategory {
     public boolean getCategoryActive() {
         return categoryActive;
     }
+    public String getCategoryLocation(){return categoryLocation;}
 
 
-    public EventCategory(String categoryID, String categoryName, int categoryEventCount, boolean categoryActive) {
+    public EventCategory(String categoryID, String categoryName, int categoryEventCount, boolean categoryActive, String categoryLocation) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
         this.categoryEventCount = categoryEventCount;
         this.categoryActive = categoryActive;
+        this.categoryLocation = categoryLocation;
     }
 
 
@@ -54,21 +59,3 @@ public class EventCategory {
         this.categoryEventCount = count;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

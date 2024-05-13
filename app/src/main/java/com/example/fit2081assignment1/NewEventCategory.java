@@ -27,10 +27,11 @@ public class NewEventCategory extends AppCompatActivity {
     EditText etCategoryID;
     EditText etCategoryName;
     EditText etEventCount;
+    EditText etEventLocation;
     Switch swIsActive;
     ArrayList<EventCategory> eventCategoryList;
 
-    private EMAViewmodel emaViewmodel;
+    private EMAViewmodel emaViewModel;
 
 
     @Override
@@ -43,11 +44,12 @@ public class NewEventCategory extends AppCompatActivity {
         etCategoryName = findViewById(R.id.editTextCategoryName);
         etEventCount = findViewById(R.id.editTextEventCount);
         swIsActive = findViewById(R.id.switchIsActiveCategory);
+        etEventLocation = findViewById(R.id.editTextEventLocation);
 
 
         // Initialize the list
         eventCategoryList = new ArrayList<>();
-        emaViewmodel = new ViewModelProvider(this).get(EMAViewmodel.class);
+        emaViewModel = new ViewModelProvider(this).get(EMAViewmodel.class);
     }
 
     public void onSave(View view) {
@@ -89,6 +91,7 @@ public class NewEventCategory extends AppCompatActivity {
         String strCategoryID = etCategoryID.getText().toString();
         String strCategoryName = etCategoryName.getText().toString();
         String strEventCount = etEventCount.getText().toString();
+        String strEventLocation = etEventLocation.getText().toString();
 
         if (strCategoryName.isEmpty() || strEventCount.isEmpty()) {
             // Show error message if it is empty
@@ -126,11 +129,12 @@ public class NewEventCategory extends AppCompatActivity {
                 strCategoryID,
                 strCategoryName,
                 intEventCount,
-                swIsActive.isChecked()
+                swIsActive.isChecked(),
+                strEventLocation
         );
 
 
-        emaViewmodel.insert(newEventCategory);
+        emaViewModel.insert(newEventCategory);
         Toast.makeText(this, "Category saved successfully: " + strCategoryID, Toast.LENGTH_SHORT).show();
 
         Intent dashboardIntent = new Intent(getApplicationContext(), Dashboard.class);
@@ -142,6 +146,7 @@ public class NewEventCategory extends AppCompatActivity {
         etCategoryName.setText("");
         etEventCount.setText("");
         swIsActive.setChecked(false);
+
     }
 
 

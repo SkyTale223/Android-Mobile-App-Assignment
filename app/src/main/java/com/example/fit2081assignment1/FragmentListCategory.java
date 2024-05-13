@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
@@ -19,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +35,8 @@ public class FragmentListCategory extends Fragment {
     CategoryAdapter categoryAdapter;
     RecyclerView categoryRecyclerView;
     LayoutManager categoryLayoutManager;
+    EMAViewmodel emaViewModel;
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -81,6 +87,7 @@ public class FragmentListCategory extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View categoryView = inflater.inflate(R.layout.fragment_list_category, container, false);
+        emaViewModel = new ViewModelProvider(this).get(EMAViewmodel.class);
 
 
         super.onViewCreated(categoryView, savedInstanceState);
@@ -94,28 +101,12 @@ public class FragmentListCategory extends Fragment {
         categoryAdapter = new CategoryAdapter();
         // Setting the recycler views adapter to the instance created
         categoryRecyclerView.setAdapter(categoryAdapter);
+        emaViewModel.getAllEventCategoryLiveData().observe(getViewLifecycleOwner(), newData ->{
+            categoryAdapter.setData(new ArrayList<EventCategory>(newData));
+            categoryAdapter.notifyDataSetChanged();
+        });
 
 
-        SharedPreferences categorySharedPreference = getActivity().getSharedPreferences("spCategory", MODE_PRIVATE);
-        String restoredCategoryString = categorySharedPreference.getString("keyCategory", "[]");
-
-
-        Gson gson = new Gson();
-        // Creating a type which determines the structure and extracting the specific type
-        Type typeCategory = new TypeToken<ArrayList<EventCategory>>() {
-        }.getType();
-        // Convert JSON string to ArrayList of category objects using Gson
-        listCategory = gson.fromJson(restoredCategoryString, typeCategory);
-
-        //Log.d("SharedPreferences", "Category GSON: " + listCategory);
-
-        if (listCategory == null) {
-            listCategory = new ArrayList<>();
-        } else {
-            // Set data to RecyclerView adapter only if listCategory is not null
-            categoryAdapter.setData(listCategory);
-            categoryRecyclerView.setAdapter(categoryAdapter);
-        }
         return categoryView;
     }
 }
