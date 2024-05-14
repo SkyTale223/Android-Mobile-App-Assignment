@@ -1,5 +1,7 @@
 package com.example.fit2081assignment1;
 
+import android.content.Context;
+import android.content.Intent;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +40,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.eventViewHol
 
         String eventActive = isEventActive? "Active" : "Inactive";
         holder.tv_event_active.setText(eventActive);
+
+        holder.itemView.setOnClickListener(v -> {
+            String selectedEvent = eventData.get(position).getEventName();
+
+
+            Context context = holder.itemView.getContext();
+            Intent intent = new Intent(context, EventGoogleResult.class);
+            intent.putExtra("SelectedEvent", selectedEvent);
+            context.startActivity(intent);
+        });
+
     }
 
     @Override

@@ -32,7 +32,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 
-public class FragmentListCategory extends Fragment implements CategoryAdapter.OnCategoryClickListener {
+public class FragmentListCategory extends Fragment {
     ArrayList<EventCategory> listCategory = new ArrayList<>();
     CategoryAdapter categoryAdapter;
     RecyclerView categoryRecyclerView;
@@ -99,7 +99,7 @@ public class FragmentListCategory extends Fragment implements CategoryAdapter.On
         // Setting the recycler view to the category layout manager
         categoryRecyclerView.setLayoutManager(categoryLayoutManager);
         // Creating an instance of Category Adapter here
-        categoryAdapter = new CategoryAdapter(this); // Pass the listener to the adapter
+        categoryAdapter = new CategoryAdapter(); // Pass the listener to the adapter
         // Setting the recycler views adapter to the instance created
         categoryRecyclerView.setAdapter(categoryAdapter);
         emaViewModel.getAllEventCategoryLiveData().observe(getViewLifecycleOwner(), newData ->{
@@ -110,14 +110,4 @@ public class FragmentListCategory extends Fragment implements CategoryAdapter.On
         return categoryView;
     }
 
-    @Override
-    public void onCategoryClick(int position) {
-        // Handle the click event here
-        // For example, you can start the GoogleMapActivity with the location of the clicked category
-        EventCategory clickedCategory = categoryAdapter.getItem(position);
-        // Start GoogleMapActivity with location data
-        Intent intent = new Intent(getActivity(), GoogleMapActivity.class);
-        intent.putExtra("location", clickedCategory.getCategoryLocation());
-        startActivity(intent);
-    }
 }

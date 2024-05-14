@@ -1,6 +1,8 @@
 package com.example.fit2081assignment1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.categoryViewHolder> {
-    private ArrayList<EventCategory> categoryData = new ArrayList<>();
-    private OnCategoryClickListener mListener;
-
-    public interface OnCategoryClickListener {
-        void onCategoryClick(int position);
-    }
+    ArrayList<EventCategory> categoryData = new ArrayList<EventCategory>();
 
     public void setData(ArrayList<EventCategory> data) {
         this.categoryData = data;
-        notifyDataSetChanged();
-    }
-
-    public CategoryAdapter(OnCategoryClickListener listener) {
-        this.mListener = listener;
     }
 
     @NonNull
@@ -33,8 +25,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
     public categoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Cardview inflated as a item of recyclerview
         View categoryV = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list, parent, false);
-        return new categoryViewHolder(categoryV);
+        categoryViewHolder viewHolder = new categoryViewHolder(categoryV);
+        return viewHolder;
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull categoryViewHolder holder, int position) {
@@ -49,15 +43,20 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
         String categoryActive = isCategoryActive ? "Yes" : "No";
         holder.tv_cat_active.setText(categoryActive);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onCategoryClick(position);
-                }
-            }
+        holder.itemView.setOnClickListener(v -> {
+            String selectedLocation = categoryData.get(position).getCategoryLocation();
+            String selectedCategoryName = categoryData.get(position).getCategoryName();
+
+
+            Context context = holder.itemView.getContext();
+            Intent intent = new Intent(context, GoogleMapActivity.class);
+            intent.putExtra("CategoryName", selectedCategoryName);
+            intent.putExtra("Location", selectedLocation);
+            context.startActivity(intent);
         });
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -80,9 +79,5 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
             tv_cat_active = itemView.findViewById(R.id.textViewCatActive);
             tv_event_count = itemView.findViewById(R.id.textViewEventCount);
         }
-    }
-
-    public EventCategory getItem(int position) {
-        return categoryData.get(position);
     }
 }

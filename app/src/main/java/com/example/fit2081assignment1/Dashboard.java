@@ -31,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Dashboard extends AppCompatActivity {
@@ -180,7 +181,34 @@ public class Dashboard extends AppCompatActivity {
 
 
     private void saveEvent() {
-        Log.d("SaveEvent", "Save event method called");
+
+        // Start of the random ID generator
+        //Declaring what alphabets and stringbuilder variable
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder eventID = new StringBuilder();
+        Random random = new Random();
+
+        // Appending E to start of ID
+        eventID.append("E");
+
+        // Loop to start appending random characters to the string
+        for (int i = 0; i < 2; i++) {
+            int index = random.nextInt(alphabet.length());
+            char randomChar = alphabet.charAt(index);
+            eventID.append(randomChar);
+        }
+
+        // Appending a - for the gap in between
+        eventID.append("-");
+
+        // Similarly appending random digits to the string
+        for (int i = 0; i < 5; i++) {
+            int randomDigit = random.nextInt(10);
+            eventID.append(randomDigit);
+        }
+
+        // Setting categoryID string on the edit text, starting with C
+        etEventID.setText(eventID);
 
         // Extracted the event data from the UI fields
         String strEventID = etEventID.getText().toString();
