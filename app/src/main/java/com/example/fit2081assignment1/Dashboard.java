@@ -3,6 +3,7 @@ package com.example.fit2081assignment1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.metrics.Event;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -39,6 +41,7 @@ public class Dashboard extends AppCompatActivity {
     DrawerLayout dashboardDrawerLayout;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,9 @@ public class Dashboard extends AppCompatActivity {
         setSupportActionBar(dashboardToolbar);
         // Setting the title
         getSupportActionBar().setTitle("33162050 Assignment 2");
+
+
+
 
 
         dashboardFab = findViewById(R.id.fab);
@@ -73,8 +79,11 @@ public class Dashboard extends AppCompatActivity {
         dashboardNavigationView.setNavigationItemSelectedListener(new DashboardNavigationHandler());
 
 
+
         // Initalise the fragment on startup
         refreshFragmentCategory();
+
+
     }
 
     // Start the navigation drawer
@@ -140,12 +149,8 @@ public class Dashboard extends AppCompatActivity {
 
     // Delete all categories
     private void deleteAllCategories() {
-        SharedPreferences deleteCategoryPrefrences = getSharedPreferences("spCategory", MODE_PRIVATE);
-        SharedPreferences.Editor deleteEditor = deleteCategoryPrefrences.edit();
-        // Remove the key
-        deleteEditor.remove("keyCategory");
-        deleteEditor.apply();
-        refreshFragmentCategory();
+        EMAViewmodel emaViewmodel = new ViewModelProvider(this).get(EMAViewmodel.class);
+        emaViewmodel.deleteAll();
     }
 
     // Delete all events

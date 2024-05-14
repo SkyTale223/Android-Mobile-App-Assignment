@@ -36,4 +36,8 @@ public class EMARepository {
         // Executes the database operation to insert the item in a background thread.
         EMADatabase.databaseWriteExecutor.execute(() -> emaDAO.addEventCategory(eventCategory));
     }
+
+    void deleteAll() {
+        EMADatabase.databaseWriteExecutor.execute(() -> emaDAO.deleteAllEventCategory());
+    }
 }

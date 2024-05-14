@@ -18,5 +18,9 @@ public interface EMADao {
 
     @Insert
     void addEventCategory(EventCategory eventCategory);
+
+    @Query("DELETE FROM eventCategory")
+    void deleteAllEventCategory();
+
 }
 
