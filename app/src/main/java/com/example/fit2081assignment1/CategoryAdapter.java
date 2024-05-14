@@ -27,6 +27,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
         return viewHolder;
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull categoryViewHolder holder, int position) {
         // Finally setting the views
@@ -55,7 +57,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
         // Return size of array list
         return categoryData.size();
     }
-
     public class categoryViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tv_cat_id;

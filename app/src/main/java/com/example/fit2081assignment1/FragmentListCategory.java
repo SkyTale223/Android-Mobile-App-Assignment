@@ -107,6 +107,9 @@ public class FragmentListCategory extends Fragment {
         });
 
 
+
+
+
         return categoryView;
     }
 }
