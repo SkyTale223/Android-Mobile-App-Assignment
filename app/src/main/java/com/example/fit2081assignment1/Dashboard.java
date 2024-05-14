@@ -162,6 +162,9 @@ public class Dashboard extends AppCompatActivity {
 
     // Delete all events
     private void deleteAllEvents() {
+        EMAViewmodel emaViewmodel = new ViewModelProvider(this).get(EMAViewmodel.class);
+        emaViewmodel.deleteAllEventEvents();
+
     }
 
     // Refreshes the category fragment so it displays new fragments

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ public class FragmentListEvent extends Fragment {
     EventAdapter eventAdapter;
     RecyclerView eventRecyclerView;
     RecyclerView.LayoutManager eventLayoutManager;
+    EMAViewmodel emaViewModel;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -75,7 +77,9 @@ public class FragmentListEvent extends Fragment {
         // Inflate the layout for this fragment
         View eventView = inflater.inflate(R.layout.fragment_list_event, container, false);
 
-        super.onViewCreated(eventView, savedInstanceState);
+        // Initialize your EMAViewmodel here
+        emaViewModel = new ViewModelProvider(this).get(EMAViewmodel.class);
+
         // Finding view of category first
         eventRecyclerView = eventView.findViewById(R.id.eventRecyclerView);
         // Creating new instance of lot manager and passing the current fragment context
@@ -87,21 +91,12 @@ public class FragmentListEvent extends Fragment {
         // Setting the recycler views adapter to the instance created
         eventRecyclerView.setAdapter(eventAdapter);
 
-        SharedPreferences eventSharedPreference = getActivity().getSharedPreferences("spEvent", Context.MODE_PRIVATE);
-        String restoredEventString = eventSharedPreference.getString("keyEvent", "[]");
+        // Observe the LiveData only after the ViewModel is properly initialized
+        emaViewModel.getAllEventEventLiveData().observe(getViewLifecycleOwner(), newData -> {
+            eventAdapter.setData(new ArrayList<EventEvent>(newData));
+            eventAdapter.notifyDataSetChanged();
+        });
 
-        Gson gson = new Gson();
-        // Creating a type which determines the structure and extracting the specific type
-        Type typeEvent = new TypeToken<ArrayList<EventEvent>>(){}.getType();
-        listEvent = gson.fromJson(restoredEventString, typeEvent);
-
-        if(listEvent == null){
-            listEvent = new ArrayList<>();
-        } else{
-            eventAdapter.setData(listEvent);
-            eventRecyclerView.setAdapter(eventAdapter);
-        }
         return eventView;
     }
-
 }
