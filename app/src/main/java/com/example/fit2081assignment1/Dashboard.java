@@ -3,7 +3,6 @@ package com.example.fit2081assignment1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.metrics.Event;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +28,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -39,6 +39,8 @@ public class Dashboard extends AppCompatActivity {
     Switch swEventIsActive;
     FloatingActionButton dashboardFab;
     DrawerLayout dashboardDrawerLayout;
+    ArrayList<EventEvent> eventEventList;
+    private EMAViewmodel emaViewModel;
 
 
 
@@ -58,6 +60,8 @@ public class Dashboard extends AppCompatActivity {
         // Setting the title
         getSupportActionBar().setTitle("33162050 Assignment 2");
 
+        eventEventList = new ArrayList<>();
+        emaViewModel = new ViewModelProvider(this).get(EMAViewmodel.class);
 
 
 
@@ -150,16 +154,11 @@ public class Dashboard extends AppCompatActivity {
     // Delete all categories
     private void deleteAllCategories() {
         EMAViewmodel emaViewmodel = new ViewModelProvider(this).get(EMAViewmodel.class);
-        emaViewmodel.deleteAll();
+        emaViewmodel.deleteAllEventCategories();
     }
 
     // Delete all events
     private void deleteAllEvents() {
-        SharedPreferences deleteEventPrefrences = getSharedPreferences("spEvent", MODE_PRIVATE);
-        SharedPreferences.Editor deleteEditor = deleteEventPrefrences.edit();
-        // Remove the key
-        deleteEditor.remove("keyEvent");
-        deleteEditor.apply();
     }
 
     // Refreshes the category fragment so it displays new fragments
@@ -175,153 +174,95 @@ public class Dashboard extends AppCompatActivity {
 
 
     private void saveEvent() {
-        // Start of the random ID generator
-        //Declaring what alphabets and stringbuilder variable
-        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        StringBuilder eventID = new StringBuilder();
-        Random random = new Random();
+        Log.d("SaveEvent", "Save event method called");
 
-        // Appending E to start of ID
-        eventID.append("E");
-
-        // Loop to start appending random characters to the string
-        for (int i = 0; i < 2; i++) {
-            int index = random.nextInt(alphabet.length());
-            char randomChar = alphabet.charAt(index);
-            eventID.append(randomChar);
-        }
-
-        // Appending a - for the gap in between
-        eventID.append("-");
-
-        // Similarly appending random digits to the string
-        for (int i = 0; i < 5; i++) {
-            int randomDigit = random.nextInt(10);
-            eventID.append(randomDigit);
-        }
-
-        // Setting categoryID string on the edit text, starting with C
-        etEventID.setText(eventID);
-
-        saveEventInformation();
-    }
-
-
-    private void saveEventInformation() {
-        // Retrieve event information from EditText and Switch
+        // Extracted the event data from the UI fields
         String strEventID = etEventID.getText().toString();
         String strEventName = etEventName.getText().toString();
         String strEventCategoryID = etCategory.getText().toString();
         String strTicketCount = etTickets.getText().toString();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("spCategory", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String existingCategoryDataJson = sharedPreferences.getString("keyCategory", "[]");
-        Type typeCategory = new TypeToken<ArrayList<EventCategory>>() {
-        }.getType();
-        ArrayList<EventCategory> currentCategoryData = gson.fromJson(existingCategoryDataJson, typeCategory);
-
-
+        // Validate event information
         if (strEventName.isEmpty() || strEventCategoryID.isEmpty() || strTicketCount.isEmpty()) {
-            // Show error message if it is empty
+            // Show error message if any field is empty
             Toast.makeText(this, "Please ensure all inputs are filled out and valid", Toast.LENGTH_SHORT).show();
-            clearEventForm();
             return;
         }
 
+        // Convert ticket count to integer
         int intTicketCount = Integer.parseInt(strTicketCount);
         if (intTicketCount <= 0) {
-            // Show error message or handle negative or zero input
+            // Show error message if ticket count is not positive
             Toast.makeText(this, "Ticket count must be a positive integer", Toast.LENGTH_SHORT).show();
-            clearEventForm();
             return;
         }
 
+        // Check if event name contains alphabets
         boolean hasAlphabets = false;
-        // Iterating over each character and comparing them with the built in char in java
         for (char c : strEventName.toCharArray()) {
             if (Character.isLetter(c)) {
                 hasAlphabets = true;
                 break;
             }
         }
-
         if (!hasAlphabets) {
+            // Show error message if event name does not contain alphabets
             Toast.makeText(this, "Event Name must contain alphabets", Toast.LENGTH_SHORT).show();
-            clearEventForm();
             return;
         }
 
-        boolean isValidCategoryID = false;
-        // Using a for loop, cycle for all category in the array list
-        for (EventCategory category : currentCategoryData) {
-            Log.d("EventCategory", "Category ID from list: " + category.getCategoryID());
-            Log.d("EventCategory", "Event Category ID from input: " + strEventCategoryID);
+        // Retrieve category list from ViewModel
+        emaViewModel.getAllEventCategoryLiveData().observe(this, categoryList -> {
+            // Use a flag to track whether a valid category ID has been found
+            boolean isValidCategoryID = false;
 
-            // If this is equal to then append data to new array list
-            if (strEventCategoryID.equals(category.getCategoryID())) {
-                // Category ID is valid, save event information and exit loop
-                isValidCategoryID = true;
-                EventEvent newEvent = new EventEvent(
-                        strEventID,
-                        strEventName,
-                        strEventCategoryID,
-                        intTicketCount,
-                        swEventIsActive.isChecked()
-                );
+            // Iterate through the category list to find the matching category ID
+            for (EventCategory category : categoryList) {
+                if (strEventCategoryID.equals(category.getCategoryID())) {
+                    // Found a valid category ID
+                    Log.d("SaveEvent", "Valid category ID found: " + strEventCategoryID);
+                    isValidCategoryID = true;
 
-                int currentEventCount = category.getCategoryEventCount();
-                category.setCategoryEventCount(currentEventCount + 1);
-                saveEventInformationToSharedPreferences(newEvent);
-                // Breaking out of loop upon valid category
-                break;
+                    // Create a new EventEvent object
+                    EventEvent newEventEvent = new EventEvent(
+                            strEventID,
+                            strEventName,
+                            strEventCategoryID,
+                            intTicketCount,
+                            swEventIsActive.isChecked()
+                    );
+
+                    // Increment event count for the category
+                    int currentEventCount = category.getCategoryEventCount();
+                    category.setCategoryEventCount(currentEventCount + 1);
+
+                    // Update the category in the database
+                    emaViewModel.updateEventCategory(category);
+
+                    // Insert the new event
+                    emaViewModel.insert(newEventEvent);
+
+                    // Show success message
+                    Toast.makeText(this, "Event saved successfully", Toast.LENGTH_SHORT).show();
+
+                    // Clear form fields
+                    clearEventForm();
+
+                    // Break out of the loop after saving the event
+                    break;
+                }
             }
-        }
 
-        String updatedCategoryDataJson = gson.toJson(currentCategoryData);
-        sharedPreferences.edit().putString("keyCategory", updatedCategoryDataJson).apply();
-
-        if (!isValidCategoryID) {
-            // If no matching category ID is found, display error message
-            clearEventForm();
-            Toast.makeText(this, "Category ID invalid", Toast.LENGTH_SHORT).show();
-        }
+            // If a valid category ID is not found, show error message
+            if (!isValidCategoryID) {
+                Log.d("SaveEvent", "Invalid category ID: " + strEventCategoryID);
+                Toast.makeText(this, "Category ID invalid", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
-    private void saveEventInformationToSharedPreferences(EventEvent newEvent) {
-        // Save event information to SharedPreferences
-        SharedPreferences eventSharedPreferences = getSharedPreferences("spEvent", MODE_PRIVATE);
 
-        Gson gson = new Gson();
-
-        // Retrieve existing data from SharedPreferences
-        String existingEventDataJson = eventSharedPreferences.getString("keyEvent", "[]");
-
-        Type typeEvent = new TypeToken<ArrayList<EventEvent>>() {
-        }.getType();
-        ArrayList<EventEvent> existingEventData = gson.fromJson(existingEventDataJson, typeEvent);
-
-        // Append the new data to the existing data
-        if (existingEventData == null) {
-            existingEventData = new ArrayList<>();
-        }
-        existingEventData.add(newEvent);
-
-        // Convert the updated data to JSON
-        String updatedEventDataJson = gson.toJson(existingEventData);
-
-        Log.d("SharedPreferences", "Updated Event Data JSON: " + updatedEventDataJson);
-
-
-        // Save the updated data back to SharedPreferences
-        SharedPreferences.Editor editor = eventSharedPreferences.edit();
-        editor.putString("keyEvent", updatedEventDataJson);
-        editor.apply();
-        // Call the snackbar here to avoid further validation, if event is null as this only appears upon successful save
-        showUndoSnackbar(newEvent);
-
-    }
 
     private void showUndoSnackbar(final EventEvent lastSavedEvent) {
         // Creating a snackbar to say event is saved

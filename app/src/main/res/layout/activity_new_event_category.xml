@@ -151,8 +151,10 @@
         android:layout_marginTop="20dp"
         android:text="Location"
         android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@+id/switchIsActiveCategory"
-        tools:layout_editor_absoluteX="34dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.093"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchIsActiveCategory" />
 
     <EditText
         android:id="@+id/editTextEventLocation"

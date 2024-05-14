@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {EventCategory.class}, version = 1)
+@Database(entities = {EventCategory.class, EventEvent.class}, version = 2)
 public abstract class EMADatabase extends RoomDatabase{
     public static final String EMA_DATABASE = "ema_database";
 

@@ -8,9 +8,12 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "eventCategory")
 public class EventCategory {
-    @PrimaryKey(autoGenerate = false)
 
-    @NonNull
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private  int id;
+
+
     @ColumnInfo(name = "categoryID")
     private String categoryID;
 
@@ -43,6 +46,11 @@ public class EventCategory {
         return categoryActive;
     }
     public String getCategoryLocation(){return categoryLocation;}
+
+    public int getId() {return id;}
+
+    public void setId(int id) {this.id = id;}
+
 
 
     public EventCategory(String categoryID, String categoryName, int categoryEventCount, boolean categoryActive, String categoryLocation) {

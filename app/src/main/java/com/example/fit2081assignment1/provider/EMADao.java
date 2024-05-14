@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.fit2081assignment1.EventCategory;
+import com.example.fit2081assignment1.EventEvent;
 
 import java.util.List;
 
@@ -22,5 +24,17 @@ public interface EMADao {
     @Query("DELETE FROM eventCategory")
     void deleteAllEventCategory();
 
+    @Update
+    void updateEventCategory(EventCategory category);
+
+
+    @Query("select * from eventEvent")
+    LiveData<List<EventEvent>> getEventEvent();
+
+    @Insert
+    void addEventEvent(EventEvent eventEvent);
+
+    @Query("DELETE FROM eventEvent")
+    void deleteAllEventEvents();
 }
 

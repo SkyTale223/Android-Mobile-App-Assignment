@@ -30,7 +30,6 @@ public class NewEventCategory extends AppCompatActivity {
     EditText etEventLocation;
     Switch swIsActive;
     ArrayList<EventCategory> eventCategoryList;
-
     private EMAViewmodel emaViewModel;
 
 
