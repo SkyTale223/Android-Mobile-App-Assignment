@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,7 @@ import java.util.List;
  */
 
 public class FragmentListCategory extends Fragment {
+    ArrayList<EventCategory> listCategory = new ArrayList<>();
     CategoryAdapter categoryAdapter;
     RecyclerView categoryRecyclerView;
     LayoutManager categoryLayoutManager;
@@ -105,8 +105,6 @@ public class FragmentListCategory extends Fragment {
             categoryAdapter.setData(new ArrayList<EventCategory>(newData));
             categoryAdapter.notifyDataSetChanged();
         });
-
-
 
 
         return categoryView;

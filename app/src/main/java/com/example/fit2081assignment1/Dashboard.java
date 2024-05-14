@@ -17,6 +17,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -27,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -211,54 +214,70 @@ public class Dashboard extends AppCompatActivity {
             return;
         }
 
+        // Boolean flag to indicate whether the event has been saved successfully
+        AtomicBoolean eventSaved = new AtomicBoolean(false);
+
         // Retrieve category list from ViewModel
-        emaViewModel.getAllEventCategoryLiveData().observe(this, categoryList -> {
-            // Use a flag to track whether a valid category ID has been found
-            boolean isValidCategoryID = false;
+        LiveData<List<EventCategory>> categoryLiveData = emaViewModel.getAllEventCategoryLiveData();
+        Observer<List<EventCategory>> categoryObserver = new Observer<List<EventCategory>>() {
+            @Override
+            public void onChanged(List<EventCategory> categoryList) {
+                // Use a flag to track whether a valid category ID has been found
+                boolean isValidCategoryID = false;
 
-            // Iterate through the category list to find the matching category ID
-            for (EventCategory category : categoryList) {
-                if (strEventCategoryID.equals(category.getCategoryID())) {
-                    // Found a valid category ID
-                    Log.d("SaveEvent", "Valid category ID found: " + strEventCategoryID);
-                    isValidCategoryID = true;
+                // Iterate through the category list to find the matching category ID
+                for (EventCategory category : categoryList) {
+                    if (strEventCategoryID.equals(category.getCategoryID())) {
+                        // Found a valid category ID
+                        Log.d("SaveEvent", "Valid category ID found: " + strEventCategoryID);
+                        isValidCategoryID = true;
 
-                    // Create a new EventEvent object
-                    EventEvent newEventEvent = new EventEvent(
-                            strEventID,
-                            strEventName,
-                            strEventCategoryID,
-                            intTicketCount,
-                            swEventIsActive.isChecked()
-                    );
+                        // Create a new EventEvent object
+                        EventEvent newEventEvent = new EventEvent(
+                                strEventID,
+                                strEventName,
+                                strEventCategoryID,
+                                intTicketCount,
+                                swEventIsActive.isChecked()
+                        );
 
-                    // Increment event count for the category
-                    int currentEventCount = category.getCategoryEventCount();
-                    category.setCategoryEventCount(currentEventCount + 1);
+                        // Increment event count for the category
+                        int currentEventCount = category.getCategoryEventCount();
+                        category.setCategoryEventCount(currentEventCount + 1);
 
-                    // Update the category in the database
-                    emaViewModel.updateEventCategory(category);
+                        // Update the category in the database
+                        emaViewModel.updateEventCategory(category);
 
-                    // Insert the new event
-                    emaViewModel.insert(newEventEvent);
+                        // Insert the new event
+                        emaViewModel.insert(newEventEvent);
 
-                    // Show success message
-                    Toast.makeText(this, "Event saved successfully", Toast.LENGTH_SHORT).show();
+                        // Set the eventSaved flag to true
+                        eventSaved.set(true);
 
-                    // Clear form fields
-                    clearEventForm();
+                        // Show success message
+                        Toast.makeText(getApplicationContext(), "Event saved successfully", Toast.LENGTH_SHORT).show();
 
-                    // Break out of the loop after saving the event
-                    break;
+                        // Clear form fields
+                        clearEventForm();
+
+                        // Remove observer to ensure it only triggers once
+                        categoryLiveData.removeObserver(this);
+
+                        // Break out of the loop after saving the event
+                        break;
+                    }
+                }
+
+                // If a valid category ID is not found and event is not saved, show error message
+                if (!isValidCategoryID && !eventSaved.get()) {
+                    Log.d("SaveEvent", "Invalid category ID: " + strEventCategoryID);
+                    Toast.makeText(getApplicationContext(), "Category ID invalid", Toast.LENGTH_SHORT).show();
                 }
             }
+        };
 
-            // If a valid category ID is not found, show error message
-            if (!isValidCategoryID) {
-                Log.d("SaveEvent", "Invalid category ID: " + strEventCategoryID);
-                Toast.makeText(this, "Category ID invalid", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Observe the LiveData
+        categoryLiveData.observe(this, categoryObserver);
     }
 
 
