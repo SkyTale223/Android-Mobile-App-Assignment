@@ -1,4 +1,4 @@
-package com.example.fit2081assignment1;
+package com.example.fit2081assignment1.provider;
 
 import android.app.Application;
 import android.util.Log;
@@ -6,6 +6,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.fit2081assignment1.EventCategory;
+import com.example.fit2081assignment1.EventEvent;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.fit2081assignment1;
+package com.example.fit2081assignment1.provider;
 
 import android.app.Application;
 import android.media.metrics.Event;
@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.fit2081assignment1.EventCategory;
+import com.example.fit2081assignment1.EventEvent;
 import com.example.fit2081assignment1.provider.EMADao;
 import com.example.fit2081assignment1.provider.EMADatabase;
 

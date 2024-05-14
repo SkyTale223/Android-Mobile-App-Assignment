@@ -1,6 +1,6 @@
 package com.example.fit2081assignment1;
 
-import android.util.Log;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.categoryViewHolder> {
-    ArrayList<EventCategory> categoryData = new ArrayList<EventCategory>();
+    private ArrayList<EventCategory> categoryData = new ArrayList<>();
+    private OnCategoryClickListener mListener;
+
+    public interface OnCategoryClickListener {
+        void onCategoryClick(int position);
+    }
 
     public void setData(ArrayList<EventCategory> data) {
         this.categoryData = data;
+        notifyDataSetChanged();
+    }
+
+    public CategoryAdapter(OnCategoryClickListener listener) {
+        this.mListener = listener;
     }
 
     @NonNull
@@ -23,11 +33,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
     public categoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Cardview inflated as a item of recyclerview
         View categoryV = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list, parent, false);
-        categoryViewHolder viewHolder = new categoryViewHolder(categoryV);
-        return viewHolder;
+        return new categoryViewHolder(categoryV);
     }
-
-
 
     @Override
     public void onBindViewHolder(@NonNull categoryViewHolder holder, int position) {
@@ -39,24 +46,25 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
         boolean isCategoryActive = categoryData.get(position).getCategoryActive();
 
         // Use ternary operator to convert into yes or no
-        String categoryActive = isCategoryActive? "Yes" : "No";
+        String categoryActive = isCategoryActive ? "Yes" : "No";
         holder.tv_cat_active.setText(categoryActive);
 
-        /* Debugging
-        Log.d("CategoryAdapter", "ID: " + data.get(position).getCategoryID());
-        Log.d("CategoryAdapter", "Name: " + data.get(position).getCategoryName());
-        Log.d("CategoryAdapter", "Event Count: " + data.get(position).getCategoryEventCount());
-        Log.d("CategoryAdapter", "Is Active: " + data.get(position).getCategoryActive());
-         */
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onCategoryClick(position);
+                }
+            }
+        });
     }
-
 
     @Override
     public int getItemCount() {
         // Return size of array list
         return categoryData.size();
     }
+
     public class categoryViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tv_cat_id;
@@ -72,5 +80,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
             tv_cat_active = itemView.findViewById(R.id.textViewCatActive);
             tv_event_count = itemView.findViewById(R.id.textViewEventCount);
         }
+    }
+
+    public EventCategory getItem(int position) {
+        return categoryData.get(position);
     }
 }

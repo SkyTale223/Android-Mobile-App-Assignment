@@ -2,6 +2,7 @@ package com.example.fit2081assignment1;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.fit2081assignment1.provider.EMAViewmodel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,7 +32,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 
-public class FragmentListCategory extends Fragment {
+public class FragmentListCategory extends Fragment implements CategoryAdapter.OnCategoryClickListener {
     ArrayList<EventCategory> listCategory = new ArrayList<>();
     CategoryAdapter categoryAdapter;
     RecyclerView categoryRecyclerView;
@@ -89,7 +91,6 @@ public class FragmentListCategory extends Fragment {
         View categoryView = inflater.inflate(R.layout.fragment_list_category, container, false);
         emaViewModel = new ViewModelProvider(this).get(EMAViewmodel.class);
 
-
         super.onViewCreated(categoryView, savedInstanceState);
         // Finding view of category first
         categoryRecyclerView = categoryView.findViewById(R.id.categoryRecyclerView);
@@ -98,7 +99,7 @@ public class FragmentListCategory extends Fragment {
         // Setting the recycler view to the category layout manager
         categoryRecyclerView.setLayoutManager(categoryLayoutManager);
         // Creating an instance of Category Adapter here
-        categoryAdapter = new CategoryAdapter();
+        categoryAdapter = new CategoryAdapter(this); // Pass the listener to the adapter
         // Setting the recycler views adapter to the instance created
         categoryRecyclerView.setAdapter(categoryAdapter);
         emaViewModel.getAllEventCategoryLiveData().observe(getViewLifecycleOwner(), newData ->{
@@ -106,11 +107,17 @@ public class FragmentListCategory extends Fragment {
             categoryAdapter.notifyDataSetChanged();
         });
 
-
-
-
-
         return categoryView;
     }
-}
 
+    @Override
+    public void onCategoryClick(int position) {
+        // Handle the click event here
+        // For example, you can start the GoogleMapActivity with the location of the clicked category
+        EventCategory clickedCategory = categoryAdapter.getItem(position);
+        // Start GoogleMapActivity with location data
+        Intent intent = new Intent(getActivity(), GoogleMapActivity.class);
+        intent.putExtra("location", clickedCategory.getCategoryLocation());
+        startActivity(intent);
+    }
+}

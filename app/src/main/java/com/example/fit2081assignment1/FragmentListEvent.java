@@ -1,7 +1,5 @@
 package com.example.fit2081assignment1;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +10,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.example.fit2081assignment1.provider.EMAViewmodel;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
