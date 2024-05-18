@@ -5,16 +5,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -45,8 +49,8 @@ public class Dashboard extends AppCompatActivity {
     DrawerLayout dashboardDrawerLayout;
     ArrayList<EventEvent> eventEventList;
     private EMAViewmodel emaViewModel;
-
-
+    View touchPad;
+    private GestureDetector gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,16 @@ public class Dashboard extends AppCompatActivity {
         eventEventList = new ArrayList<>();
         emaViewModel = new ViewModelProvider(this).get(EMAViewmodel.class);
 
+        touchPad = findViewById(R.id.touchpad);
+        gestureDetector = new GestureDetector(this, new GestureListener());
 
+        touchPad.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
 
 
         dashboardFab = findViewById(R.id.fab);
@@ -87,12 +100,12 @@ public class Dashboard extends AppCompatActivity {
         dashboardNavigationView.setNavigationItemSelectedListener(new DashboardNavigationHandler());
 
 
-
         // Initalise the fragment on startup
         refreshFragmentCategory();
 
 
     }
+
 
     // Start the navigation drawer
     class DashboardNavigationHandler implements NavigationView.OnNavigationItemSelectedListener {
@@ -145,7 +158,6 @@ public class Dashboard extends AppCompatActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
-
     // Clear the event form
     private void clearEventForm() {
         etEventID.setText("");
@@ -178,7 +190,6 @@ public class Dashboard extends AppCompatActivity {
         startActivity(login);
         finish();
     }
-
 
     private void saveEvent() {
 
@@ -264,13 +275,7 @@ public class Dashboard extends AppCompatActivity {
                         isValidCategoryID = true;
 
                         // Create a new EventEvent object
-                        EventEvent newEventEvent = new EventEvent(
-                                strEventID,
-                                strEventName,
-                                strEventCategoryID,
-                                intTicketCount,
-                                swEventIsActive.isChecked()
-                        );
+                        EventEvent newEventEvent = new EventEvent(strEventID, strEventName, strEventCategoryID, intTicketCount, swEventIsActive.isChecked());
 
                         // Increment event count for the category
                         int currentEventCount = category.getCategoryEventCount();
@@ -311,7 +316,20 @@ public class Dashboard extends AppCompatActivity {
         categoryLiveData.observe(this, categoryObserver);
     }
 
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public void onLongPress(@NonNull MotionEvent e) {
+            clearEventForm();
+            Toast.makeText(Dashboard.this, "Form Cleared", Toast.LENGTH_SHORT).show();
+            super.onLongPress(e);
+        }
 
+        @Override
+        public boolean onDoubleTap(@NonNull MotionEvent e) {
+            saveEvent();
+            return true;
+        }
+    }
 
 
     private void showUndoSnackbar(final EventEvent lastSavedEvent) {

@@ -61,11 +61,11 @@ public class EMARepository {
     void deleteAllEventEvents(){
         EMADatabase.databaseWriteExecutor.execute(() -> emaDAO.deleteAllEventEvents());
     }
+
+    // Update event category by using a emaDAO.update
     public void updateEventCategory(EventCategory category) {
-        Log.d("", "Updating EventCategory: " + category.getCategoryID());
         EMADatabase.databaseWriteExecutor.execute(() -> {
             emaDAO.updateEventCategory(category);
-            Log.d("Repository", "EventCategory updated: " + category.getCategoryID());
         });
     }
 

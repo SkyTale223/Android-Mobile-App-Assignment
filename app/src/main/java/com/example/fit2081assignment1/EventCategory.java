@@ -11,7 +11,7 @@ public class EventCategory {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private  int id;
+    private int id;
 
 
     @ColumnInfo(name = "categoryID")
@@ -45,12 +45,18 @@ public class EventCategory {
     public boolean getCategoryActive() {
         return categoryActive;
     }
-    public String getCategoryLocation(){return categoryLocation;}
 
-    public int getId() {return id;}
+    public String getCategoryLocation() {
+        return categoryLocation;
+    }
 
-    public void setId(int id) {this.id = id;}
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
 
     public EventCategory(String categoryID, String categoryName, int categoryEventCount, boolean categoryActive, String categoryLocation) {

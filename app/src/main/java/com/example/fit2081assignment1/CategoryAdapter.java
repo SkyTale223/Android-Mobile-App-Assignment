@@ -43,15 +43,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
         String categoryActive = isCategoryActive ? "Yes" : "No";
         holder.tv_cat_active.setText(categoryActive);
 
+        // Find item that is clicked
         holder.itemView.setOnClickListener(v -> {
             String selectedLocation = categoryData.get(position).getCategoryLocation();
             String selectedCategoryName = categoryData.get(position).getCategoryName();
 
-
+            // Pass it into Gogole Maps class as intent using key method
             Context context = holder.itemView.getContext();
             Intent intent = new Intent(context, GoogleMapActivity.class);
             intent.putExtra("CategoryName", selectedCategoryName);
             intent.putExtra("Location", selectedLocation);
+            // Start the new activity
             context.startActivity(intent);
         });
 
@@ -73,7 +75,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.catego
 
         public categoryViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Finding items based on the cardview which is declared into the recycler view, allowing manipulation
             tv_cat_id = itemView.findViewById(R.id.textViewCatID);
             tv_cat_name = itemView.findViewById(R.id.textViewCatName);
             tv_cat_active = itemView.findViewById(R.id.textViewCatActive);

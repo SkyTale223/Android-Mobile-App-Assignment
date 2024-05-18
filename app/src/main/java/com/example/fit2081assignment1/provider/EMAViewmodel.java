@@ -37,13 +37,18 @@ public class EMAViewmodel extends AndroidViewModel {
         repository.insert(eventCategory);
     }
 
-    public void insert(EventEvent eventEvent){
+    public void insert(EventEvent eventEvent) {
         repository.insert(eventEvent);
     }
 
-    public void deleteAllEventCategories() {repository.deleteAllEventCategories();}
+    public void deleteAllEventCategories() {
+        repository.deleteAllEventCategories();
+    }
 
-    public void deleteAllEventEvents() {repository.deleteAllEventEvents();}
+    public void deleteAllEventEvents() {
+        repository.deleteAllEventEvents();
+    }
+
     public void updateEventCategory(EventCategory category) {
         Log.d("ViewModel", "Updating EventCategory: " + category.getCategoryID());
         repository.updateEventCategory(category);

@@ -33,7 +33,7 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
         setContentView(binding.getRoot());
 
         locationToFocus = getIntent().getExtras().getString("Location", "Australia");
-        categoryNameToFocus = getIntent().getExtras().getString("CategoryName","Null");
+        categoryNameToFocus = getIntent().getExtras().getString("CategoryName", "Null");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

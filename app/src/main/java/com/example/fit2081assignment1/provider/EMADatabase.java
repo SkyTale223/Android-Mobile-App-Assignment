@@ -1,4 +1,5 @@
 package com.example.fit2081assignment1.provider;
+
 import android.content.Context;
 
 import androidx.room.Database;
@@ -13,7 +14,7 @@ import java.util.concurrent.Executors;
 
 
 @Database(entities = {EventCategory.class, EventEvent.class}, version = 2)
-public abstract class EMADatabase extends RoomDatabase{
+public abstract class EMADatabase extends RoomDatabase {
     public static final String EMA_DATABASE = "ema_database";
 
     public abstract EMADao EMADao();
